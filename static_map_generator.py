@@ -18,6 +18,15 @@ from pyecharts.charts import Map, Geo, EffectScatter, Grid
 from pyecharts.globals import ThemeType
 from pyecharts.commons.utils import JsCode
 import re
+import tempfile
+import csv
+import random
+import shutil
+from pathlib import Path
+
+# 添加调试信息
+print("脚本开始执行...")
+print(f"命令行参数: {sys.argv}")
 
 # 花粉等级定义
 pollen_levels = [
@@ -178,254 +187,329 @@ def filter_data_by_date(date_str):
 
 def create_map(date_str):
     """创建花粉分布地图"""
-    # 获取该日期的数据
-    data = filter_data_by_date(date_str)
-    if data is None or len(data) == 0:
-        print(f"错误：日期 {date_str} 没有可用数据")
-        return None
-    
-    print(f"为日期 {date_str} 创建地图...")
-    
-    # 从数据中提取城市、省份和花粉值
-    city_data = []  # 格式：[(城市, 花粉数值), ...]
-    city_province_data = []  # 格式：[(城市, 省份, 花粉数值), ...]
-    province_values = {}  # 按省份存储最大花粉值
-    
-    for _, row in data.iterrows():
-        city_name = row['城市']
-        level = row['花粉等级']
+    try:
+        # 获取该日期的数据
+        data = filter_data_by_date(date_str)
+        if data is None or len(data) == 0:
+            print(f"错误：日期 {date_str} 没有可用数据")
+            return None
         
-        # 将花粉等级映射为数值
-        level_map = {
-            '暂无': 0, '很低': 1, '低': 2, '较低': 3, '中': 4,
-            '偏高': 5, '高': 6, '较高': 7, '很高': 8, '极高': 9
-        }
-        level_value = level_map.get(level, 0)
+        print(f"为日期 {date_str} 创建地图...")
         
-        # 城市到省份的映射（与map_server_example.py保持一致）
-        city_to_province = {
-            '北京': '北京', '上海': '上海', '天津': '天津', '重庆': '重庆',
-            '广州': '广东', '深圳': '广东', '杭州': '浙江', '南京': '江苏', 
-            '武汉': '湖北', '成都': '四川', '西安': '陕西', '沈阳': '辽宁', 
-            '哈尔滨': '黑龙江', '长春': '吉林', '长沙': '湖南', '福州': '福建', 
-            '郑州': '河南', '济南': '山东', '青岛': '山东', '苏州': '江苏'
-        }
+        # 从数据中提取城市、省份和花粉值
+        city_data = []  # 格式：[(城市, 花粉数值), ...]
+        city_province_data = []  # 格式：[(城市, 省份, 花粉数值), ...]
+        province_values = {}  # 按省份存储最大花粉值
         
-        # 如果城市在映射中，使用映射指定的省份
-        province_name = city_to_province.get(city_name)
-        if not province_name:
-            # 如果没有直接映射，尝试简单提取省份名
-            province_name = city_name[:2]
-            if province_name.endswith(('市', '省', '区')):
-                province_name = province_name[:-1]
+        for _, row in data.iterrows():
+            city_name = row['城市']
+            level = row['花粉等级']
+            
+            # 将花粉等级映射为数值
+            level_map = {
+                '暂无': 0, '很低': 1, '低': 2, '较低': 3, '中': 4,
+                '偏高': 5, '高': 6, '较高': 7, '很高': 8, '极高': 9
+            }
+            level_value = level_map.get(level, 0)
+            
+            # 城市到省份的映射（与map_server_example.py保持一致）
+            city_to_province = {
+                '北京': '北京', '上海': '上海', '天津': '天津', '重庆': '重庆',
+                '广州': '广东', '深圳': '广东', '杭州': '浙江', '南京': '江苏', 
+                '武汉': '湖北', '成都': '四川', '西安': '陕西', '沈阳': '辽宁', 
+                '哈尔滨': '黑龙江', '长春': '吉林', '长沙': '湖南', '福州': '福建', 
+                '郑州': '河南', '济南': '山东', '青岛': '山东', '苏州': '江苏'
+            }
+            
+            # 如果城市在映射中，使用映射指定的省份
+            province_name = city_to_province.get(city_name)
+            if not province_name:
+                # 如果没有直接映射，尝试简单提取省份名
+                province_name = city_name[:2]
+                if province_name.endswith(('市', '省', '区')):
+                    province_name = province_name[:-1]
+            
+            city_data.append((city_name, level_value))
+            city_province_data.append((city_name, province_name, level_value))
         
-        city_data.append((city_name, level_value))
-        city_province_data.append((city_name, province_name, level_value))
-    
-    # 计算每个省份的最大花粉值
-    for city, province, value in city_province_data:
-        if province in province_values:
-            province_values[province] = max(province_values[province], value)
-        else:
-            province_values[province] = value
-    
-    # 转换为地图所需格式
-    province_data = [(province, value) for province, value in province_values.items()]
-    
-    print(f"已准备 {len(city_data)} 个城市的数据")
-    for city, value in city_data[:5]:
-        print(f"示例数据: 城市: {city}, 花粉数值: {value}")
-    
-    # 创建初始化选项 - 直接使用pyecharts
-    from pyecharts import options as opts
-    from pyecharts.charts import Map, Geo, Grid
-    from pyecharts.globals import ThemeType
-    from pyecharts.commons.utils import JsCode
-    
-    init_opts = opts.InitOpts(
-        width="1000px", 
-        height="800px",
-        theme=ThemeType.LIGHT,
-        page_title=f"全国花粉分布地图 - {date_str}"
-    )
-    
-    # 创建地图实例
-    map_chart = Map(init_opts=init_opts)
-    
-    # 添加省份填充地图 - 设置为统一的浅灰色背景
-    map_chart.add(
-        series_name="",  # 使用空字符串作为系列名称，这样图例中不会显示省份
-        data_pair=[(p, 0) for p, _ in province_data],  # 所有省份使用相同的值
-        maptype="china",
-        is_roam=True,  # 允许缩放和平移
-        label_opts=opts.LabelOpts(
-            is_show=True,  # 显示省份名称
-            font_size=10,
-            color="#000000"
-        ),
-        itemstyle_opts=opts.ItemStyleOpts(
-            color="#F7F7F7",  # 统一的浅灰色背景
-            border_width=0.5,
-            border_color="#DDDDDD",
-        ),
-        emphasis_itemstyle_opts=opts.ItemStyleOpts(
-            border_width=1,
-            border_color="#000000",
-            opacity=0.9
-        ),
-        tooltip_opts=opts.TooltipOpts(
-            is_show=False  # 不显示省份的悬浮提示
+        # 计算每个省份的最大花粉值
+        for city, province, value in city_province_data:
+            if province in province_values:
+                province_values[province] = max(province_values[province], value)
+            else:
+                province_values[province] = value
+        
+        # 转换为地图所需格式
+        province_data = [(province, value) for province, value in province_values.items()]
+        
+        print(f"已准备 {len(city_data)} 个城市的数据")
+        for city, value in city_data[:5]:
+            print(f"示例数据: 城市: {city}, 花粉数值: {value}")
+        
+        print("加载pyecharts库...")
+        # 创建初始化选项 - 直接使用pyecharts
+        from pyecharts import options as opts
+        from pyecharts.charts import Map, Geo, Grid
+        from pyecharts.globals import ThemeType
+        from pyecharts.commons.utils import JsCode
+        
+        print("创建图表初始化选项...")
+        init_opts = opts.InitOpts(
+            width="1000px", 
+            height="800px",
+            theme=ThemeType.LIGHT,
+            page_title=f"全国花粉分布地图 - {date_str}",
+            renderer="canvas"  # 使用canvas渲染器更适合交互
         )
-    )
-    
-    # 设置全局选项
-    map_chart.set_global_opts(
-        title_opts=opts.TitleOpts(
-            title=f"全国花粉分布地图 - {date_str}",  # 添加标题
-            subtitle="",
-            pos_left="center",
-            title_textstyle_opts=opts.TextStyleOpts(
-                font_size=24,
-                color="#333333"
-            )
-        ),
-        tooltip_opts=opts.TooltipOpts(
-            trigger="item"
-        )
-    )
-    
-    # 创建散点图实例
-    scatter = Geo(init_opts=init_opts)
-    
-    # 添加基础地图
-    scatter.add_schema(
-        maptype="china",
-        itemstyle_opts=opts.ItemStyleOpts(
-            color="rgba(255, 255, 255, 0)",  # 透明背景
-            border_color="rgba(255, 255, 255, 0)",  # 透明边界
-        ),
-        label_opts=opts.LabelOpts(is_show=False)  # 不显示标签
-    )
-    
-    # 颜色映射
-    color_map = {
-        0: "#C4A39F",  # 暂无
-        1: "#81CB31",  # 很低
-        2: "#A1FF3D",  # 低
-        3: "#C9FF76",  # 较低
-        4: "#F5EE32",  # 中
-        5: "#FFD429",  # 偏高
-        6: "#FF642E",  # 高
-        7: "#FFAF13",  # 较高
-        8: "#FF2319",  # 很高
-        9: "#CC0000"   # 极高
-    }
-    
-    # 等级文本映射
-    level_map = {
-        0: '暂无',
-        1: '很低',
-        2: '低',
-        3: '较低',
-        4: '中',
-        5: '偏高',
-        6: '高',
-        7: '较高',
-        8: '很高',
-        9: '极高'
-    }
-    
-    # 按等级分组城市数据
-    level_data_dict = {}
-    for city, province, value in city_province_data:
-        if value not in level_data_dict:
-            level_data_dict[value] = []
-        level_data_dict[value].append((city, value))
-    
-    # 为每个等级创建散点图 - 直接参考map_server_example.py的做法
-    for level, data in level_data_dict.items():
-        level_name = level_map.get(level, f"等级{level}")
-        color = color_map.get(level, "#888888")
         
-        scatter.add(
-            series_name=level_name,
-            data_pair=data,
-            type_="effectScatter",
-            symbol_size=12,
-            color=color,
-            effect_opts=opts.EffectOpts(
-                is_show=True,
-                scale=3.5,
-                period=4,
-                color=color,
-                brush_type="stroke"
-            ),
+        print("创建地图实例...")
+        # 创建地图实例
+        map_chart = Map(init_opts=init_opts)
+        
+        print("添加省份填充地图...")
+        # 添加省份填充地图 - 设置为统一的浅灰色背景
+        map_chart.add(
+            series_name="",  # 使用空字符串作为系列名称，这样图例中不会显示省份
+            data_pair=[(p, 0) for p, _ in province_data],  # 所有省份使用相同的值
+            maptype="china",
+            is_roam=True,  # 允许缩放和平移
             label_opts=opts.LabelOpts(
-                is_show=True,
-                formatter="{b}",
-                position="right",
+                is_show=True,  # 显示省份名称
                 font_size=10,
-                color="#333"
+                color="#000000"
             ),
-            itemstyle_opts=opts.ItemStyleOpts(opacity=0.8),
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="#F7F7F7",  # 统一的浅灰色背景
+                border_width=0.5,
+                border_color="#DDDDDD",
+            ),
+            emphasis_itemstyle_opts=opts.ItemStyleOpts(
+                border_width=1,
+                border_color="#000000",
+                opacity=0.9
+            ),
             tooltip_opts=opts.TooltipOpts(
-                formatter=JsCode(
-                    """function(params) {
-                        var levelMap = {
-                            0: '暂无',
-                            1: '很低',
-                            2: '低',
-                            3: '较低',
-                            4: '中',
-                            5: '偏高',
-                            6: '高',
-                            7: '较高',
-                            8: '很高',
-                            9: '极高'
-                        };
-                        var value = params.value[2];
-                        var levelText = levelMap[value] || '未知';
-                        return params.name + '<br/>花粉等级: ' + levelText;
-                    }"""
+                is_show=False  # 不显示省份的悬浮提示
+            )
+        )
+        
+        print("设置地图全局选项...")
+        # 设置全局选项 - 删除标题
+        map_chart.set_global_opts(
+            title_opts=opts.TitleOpts(
+                title="",  # 删除标题
+                subtitle="",
+                pos_left="center"
+            ),
+            tooltip_opts=opts.TooltipOpts(
+                trigger="item"
+            )
+        )
+        
+        print("创建散点图实例...")
+        # 创建散点图实例
+        scatter = Geo(init_opts=init_opts)
+        
+        print("添加基础地图...")
+        # 添加基础地图
+        scatter.add_schema(
+            maptype="china",
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="rgba(255, 255, 255, 0)",  # 透明背景
+                border_color="rgba(255, 255, 255, 0)",  # 透明边界
+            ),
+            label_opts=opts.LabelOpts(is_show=False)  # 不显示标签
+        )
+        
+        # 设置散点图可缩放平移
+        scatter.set_global_opts(
+            tooltip_opts=opts.TooltipOpts(trigger="item")
+        )
+        
+        # 颜色映射
+        color_map = {
+            0: "#C4A39F",  # 暂无
+            1: "#81CB31",  # 很低
+            2: "#A1FF3D",  # 低
+            3: "#C9FF76",  # 较低
+            4: "#F5EE32",  # 中
+            5: "#FFD429",  # 偏高
+            6: "#FF642E",  # 高
+            7: "#FFAF13",  # 较高
+            8: "#FF2319",  # 很高
+            9: "#CC0000"   # 极高
+        }
+        
+        # 等级文本映射
+        level_map = {
+            0: '暂无',
+            1: '很低',
+            2: '低',
+            3: '较低',
+            4: '中',
+            5: '偏高',
+            6: '高',
+            7: '较高',
+            8: '很高',
+            9: '极高'
+        }
+        
+        print("分组城市数据...")
+        # 按等级分组城市数据
+        level_data_dict = {}
+        for city, province, value in city_province_data:
+            if value not in level_data_dict:
+                level_data_dict[value] = []
+            level_data_dict[value].append((city, value))
+        
+        print("创建各等级散点图...")
+        # 为每个等级创建散点图 - 直接参考map_server_example.py的做法
+        for level, data in level_data_dict.items():
+            level_name = level_map.get(level, f"等级{level}")
+            color = color_map.get(level, "#888888")
+            
+            scatter.add(
+                series_name=level_name,
+                data_pair=data,
+                type_="effectScatter",
+                symbol_size=12,
+                color=color,
+                effect_opts=opts.EffectOpts(
+                    is_show=True,
+                    scale=3.5,
+                    period=4,
+                    color=color,
+                    brush_type="stroke"
+                ),
+                label_opts=opts.LabelOpts(
+                    is_show=True,
+                    formatter="{b}",
+                    position="right",
+                    font_size=10,
+                    color="#333"
+                ),
+                itemstyle_opts=opts.ItemStyleOpts(opacity=0.8),
+                tooltip_opts=opts.TooltipOpts(
+                    formatter=JsCode(
+                        """function(params) {
+                            var levelMap = {
+                                0: '暂无',
+                                1: '很低',
+                                2: '低',
+                                3: '较低',
+                                4: '中',
+                                5: '偏高',
+                                6: '高',
+                                7: '较高',
+                                8: '很高',
+                                9: '极高'
+                            };
+                            var value = params.value[2];
+                            var levelText = levelMap[value] || '未知';
+                            return params.name + '<br/>花粉等级: ' + levelText;
+                        }"""
+                    )
+                )
+            )
+        
+        print("设置图例...")
+        # 添加图例
+        scatter.set_global_opts(
+            visualmap_opts=opts.VisualMapOpts(
+                is_show=True,
+                type_="piecewise",  # 使用分段型视觉映射
+                pieces=[
+                    {"min": 0, "max": 0, "label": "暂无", "color": "#C4A39F"},
+                    {"min": 1, "max": 1, "label": "很低", "color": "#81CB31"},
+                    {"min": 2, "max": 2, "label": "低", "color": "#A1FF3D"},
+                    {"min": 3, "max": 3, "label": "较低", "color": "#C9FF76"},
+                    {"min": 4, "max": 4, "label": "中", "color": "#F5EE32"},
+                    {"min": 5, "max": 5, "label": "偏高", "color": "#FFD429"},
+                    {"min": 6, "max": 6, "label": "高", "color": "#FF642E"},
+                    {"min": 7, "max": 7, "label": "较高", "color": "#FFAF13"},
+                    {"min": 8, "max": 8, "label": "很高", "color": "#FF2319"},
+                    {"min": 9, "max": 9, "label": "极高", "color": "#CC0000"}
+                ],
+                pos_left="2%",  # 调整到左侧
+                pos_top="middle",  # 垂直居中
+                orient="vertical",  # 确保纵向显示
+                item_width=20,
+                item_height=15,  # 减小高度使图例更紧凑
+                textstyle_opts=opts.TextStyleOpts(
+                    font_size=12,
+                    color="#333333"
                 )
             )
         )
-    
-    # 添加图例
-    scatter.set_global_opts(
-        visualmap_opts=opts.VisualMapOpts(
-            is_show=True,
-            type_="piecewise",  # 使用分段型视觉映射
-            pieces=[
-                {"min": 0, "max": 0, "label": "暂无", "color": "#C4A39F"},
-                {"min": 1, "max": 1, "label": "很低", "color": "#81CB31"},
-                {"min": 2, "max": 2, "label": "低", "color": "#A1FF3D"},
-                {"min": 3, "max": 3, "label": "较低", "color": "#C9FF76"},
-                {"min": 4, "max": 4, "label": "中", "color": "#F5EE32"},
-                {"min": 5, "max": 5, "label": "偏高", "color": "#FFD429"},
-                {"min": 6, "max": 6, "label": "高", "color": "#FF642E"},
-                {"min": 7, "max": 7, "label": "较高", "color": "#FFAF13"},
-                {"min": 8, "max": 8, "label": "很高", "color": "#FF2319"},
-                {"min": 9, "max": 9, "label": "极高", "color": "#CC0000"}
-            ],
-            pos_left="2%",  # 调整到左侧
-            pos_top="middle",  # 垂直居中
-            orient="vertical",  # 确保纵向显示
-            item_width=20,
-            item_height=15,  # 减小高度使图例更紧凑
-            textstyle_opts=opts.TextStyleOpts(
-                font_size=12,
-                color="#333333"
-            )
-        )
-    )
-    
-    # 合并地图和散点图
-    grid = Grid(init_opts=init_opts)
-    grid.add(map_chart, grid_opts=opts.GridOpts(pos_left="10%", pos_right="10%", pos_top="10%", pos_bottom="10%"))
-    grid.add(scatter, grid_opts=opts.GridOpts(pos_left="10%", pos_right="10%", pos_top="10%", pos_bottom="10%"))
-    
-    return grid
+        
+        print("合并地图和散点图...")
+        # 合并地图和散点图
+        grid = Grid(init_opts=init_opts)
+        grid.add(map_chart, grid_opts=opts.GridOpts(pos_left="5%", pos_right="5%", pos_top="5%", pos_bottom="5%"))
+        grid.add(scatter, grid_opts=opts.GridOpts(pos_left="5%", pos_right="5%", pos_top="5%", pos_bottom="5%"))
+        
+        print("添加JS回调函数...")
+        # 添加JS回调函数，强制地图和散点保持同步 - 添加更强大的同步逻辑来修复悬停缩放问题
+        grid.add_js_funcs("""
+        // 修复chart未定义的问题
+        document.addEventListener('DOMContentLoaded', function() {
+            // 使用DOM加载完成事件确保元素存在
+            // 动态查找容器ID - ECharts容器的ID总是在图表渲染时自动生成
+            var chartContainer = document.querySelector('div[_echarts_instance_]');
+            if (chartContainer) {
+                var chart = echarts.getInstanceByDom(chartContainer);
+                
+                // 同步两个地图视图的函数，解决悬停缩放位置不一致问题
+                function syncMaps() {
+                    if (chart) {
+                        var option = chart.getOption();
+                        
+                        // 确保两个地图配置存在
+                        if (option.geo && option.geo.length >= 2) {
+                            // 获取第一个地图的中心点和缩放级别
+                            var center = option.geo[0].center;
+                            var zoom = option.geo[0].zoom;
+                            
+                            // 将这些值同步应用到第二个地图
+                            option.geo[1].center = center;
+                            option.geo[1].zoom = zoom;
+                            
+                            // 更新图表，设置notMerge为false以确保只更新变化的部分，不影响其他配置
+                            chart.setOption(option, {notMerge: false});
+                        }
+                    }
+                }
+                
+                // 监听地图缩放和平移事件
+                chart.on('georoam', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图鼠标移入事件，确保悬停时同步
+                chart.on('mouseover', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图鼠标移出事件，确保鼠标移出后同步
+                chart.on('mouseout', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图点击事件，确保点击后同步
+                chart.on('click', function(params) {
+                    syncMaps();
+                });
+            }
+        });
+        """)
+        
+        print("地图创建完成")
+        return grid
+    except Exception as e:
+        import traceback
+        print(f"创建地图时发生异常: {e}")
+        traceback.print_exc()
+        return None
 
 def create_index_html(output_dir):
     """创建GitHub Pages适用的主页HTML"""
@@ -579,6 +663,7 @@ def generate_static_maps(file_path, output_dir=None):
     with open(os.path.join(assets_dir, "favicon.svg"), "w", encoding="utf-8") as f:
         f.write(favicon_svg)
     
+    # 同时创建ico格式的favicon
     with open(os.path.join(output_dir, "favicon.ico"), "w", encoding="utf-8") as f:
         f.write(favicon_svg)
     
@@ -598,7 +683,6 @@ def generate_static_maps(file_path, output_dir=None):
         print(f"正在为日期 {date} 生成地图...")
         grid = create_map(date)
         if grid:
-            # 添加favicon链接到HTML内容
             # 渲染到HTML文件
             map_file_path = os.path.join(maps_dir, f"map_{date}.html")
             
@@ -617,43 +701,27 @@ def generate_static_maps(file_path, output_dir=None):
 """
             html_content = html_content.replace("</head>", favicon_tags + "</head>")
             
+            # 添加jQuery支持
+            jquery_tag = """
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+"""
+            html_content = html_content.replace("<head>", "<head>" + jquery_tag)
+            
             # 写入最终HTML文件
             with open(map_file_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
             
             # 删除临时文件
-            os.remove(temp_path)
+            try:
+                os.remove(temp_path)
+            except:
+                pass
             
             generated_maps.append(map_file_path)
             print(f"已生成地图: {map_file_path}")
     
-    # 生成主页 - 确保主页是在地图文件生成后生成的
+    # 确保index.html中的favicon路径正确
     create_index_html(output_dir)
-    
-    # 创建README.md文件，方便在GitHub上显示项目信息
-    readme_content = f"""# 全国花粉分布地图
-
-这是一个静态的花粉分布地图网站，可以在GitHub Pages上访问。
-
-## 数据信息
-
-- 数据源文件: {os.path.basename(file_path)}
-- 更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-- 包含日期数量: {len(available_dates)}
-
-## 如何访问
-
-访问 https://[您的用户名].github.io/[仓库名]/ 即可查看花粉分布地图。
-
-## 本地预览
-
-克隆本仓库后，直接打开 index.html 文件即可本地预览。
-"""
-    
-    readme_path = os.path.join(output_dir, "README.md")
-    with open(readme_path, 'w', encoding='utf-8') as f:
-        f.write(readme_content)
-    print(f"已创建README文件: {readme_path}")
     
     print(f"已生成 {len(generated_maps)} 个地图文件")
     print("静态地图网站已准备就绪，可部署到GitHub Pages")
