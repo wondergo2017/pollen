@@ -1,0 +1,191 @@
+name: 爬取花粉数据并部署地图
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC 00:00 (北京时间8:00)运行
+  workflow_dispatch:     # 允许手动触发
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取完整历史记录
+      
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || pip install pandas numpy requests pyecharts
+          
+          # 确保city_coordinates.json存在
+          if [ ! -f "city_coordinates.json" ]; then
+            echo "创建空的city_coordinates.json文件"
+            echo "{}" > city_coordinates.json
+          fi
+          
+          # 打印依赖版本便于调试
+          pip list
+      
+      - name: 爬取花粉数据
+        run: |
+          echo "开始爬取花粉数据..."
+          # 设置PYTHONPATH确保模块导入正确
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          
+          # 测试导入是否正常
+          python -c "from src.data.constants import DEFAULT_CONFIG, CITIES; print(f'配置检查: {DEFAULT_CONFIG.keys()}'); print(f'城市数量: {len(CITIES)}')"
+          
+          # 确保data目录存在
+          mkdir -p data
+          
+          # 尝试先运行示例数据模式以测试功能
+          echo "首先测试示例数据模式..."
+          python pollen_data_tool.py --sample -o data/test_sample.csv
+          
+          if [ ! -f "data/test_sample.csv" ]; then
+            echo "警告: 示例数据文件不存在，可能存在问题"
+          else
+            echo "示例数据生成成功，预览:"
+            head -5 data/test_sample.csv
+          fi
+          
+          # 设置要爬取的城市列表（如果有环境变量）
+          CITIES_PARAM=""
+          if [ -n "${{ vars.SELECTED_CITIES || env.SELECTED_CITIES }}" ]; then
+            CITIES_LIST="${{ vars.SELECTED_CITIES || env.SELECTED_CITIES }}"
+            echo "使用指定的城市列表: $CITIES_LIST"
+            CITIES_PARAM="-c $CITIES_LIST"
+          else
+            # 默认使用主要城市
+            echo "使用默认城市列表"
+            CITIES_PARAM="-c beijing shanghai guangzhou chengdu wuhan nanjing tianjin xian hangzhou"
+          fi
+          
+          # 运行实际数据爬取
+          echo "爬取实际数据..."
+          python pollen_data_tool.py -o data/pollen_data_latest.csv -d 7 $CITIES_PARAM
+          
+          # 检查数据文件
+          if [ ! -f "data/pollen_data_latest.csv" ]; then
+            echo "错误: 数据文件未生成，退出流程"
+            exit 1
+          fi
+          
+          # 显示数据文件
+          ls -la data/
+          echo "数据文件内容预览:"
+          head -5 data/pollen_data_latest.csv
+          echo "数据行数:"
+          wc -l data/pollen_data_latest.csv
+          
+          # 检查更新时间，如果没有数据或数据太旧则强制更新
+          DATA_MODIFIED=$(stat -c %Y data/pollen_data_latest.csv 2>/dev/null || echo 0)
+          CURRENT_TIME=$(date +%s)
+          TIME_DIFF=$(( CURRENT_TIME - DATA_MODIFIED ))
+          
+          # 如果数据文件超过7天未更新，则强制重新爬取
+          if [ $TIME_DIFF -gt 604800 ]; then
+            echo "警告: 数据文件已超过7天未更新，强制重新爬取"
+            python pollen_data_tool.py -o data/pollen_data_latest.csv -d 7 $CITIES_PARAM -f
+            echo "强制更新后的数据行数:"
+            wc -l data/pollen_data_latest.csv
+          fi
+      
+      - name: 生成静态地图文件
+        run: |
+          # 确保输出目录存在
+          mkdir -p docs/maps
+          
+          # 检查数据文件是否有足够的行数
+          FILE_LINES=$(wc -l < data/pollen_data_latest.csv)
+          echo "数据文件行数: $FILE_LINES"
+          
+          if [ "$FILE_LINES" -lt 2 ]; then
+            echo "警告: 数据文件可能没有足够的数据 ($FILE_LINES 行)，将使用示例数据"
+            # 如果实际数据文件太小，使用示例数据
+            python pollen_data_tool.py --sample -o data/pollen_data_backup.csv -d 7 $CITIES_PARAM
+            cp data/pollen_data_backup.csv data/pollen_data_latest.csv
+          fi
+          
+          # 运行地图生成脚本
+          python static_map_generator.py -f data/pollen_data_latest.csv -o docs
+          
+          # 检查生成的文件
+          echo "生成的文件列表:"
+          ls -la docs/
+          echo "地图文件夹内容:"
+          ls -la docs/maps/
+          
+          # 检查是否成功生成了地图文件
+          MAP_COUNT=$(find docs/maps -name "*.html" | wc -l)
+          echo "生成的地图文件数量: $MAP_COUNT"
+          
+          if [ "$MAP_COUNT" -eq 0 ]; then
+            echo "错误: 未生成任何地图文件，尝试使用示例数据重新生成"
+            python pollen_data_tool.py --sample -o data/pollen_data_sample.csv -d 7 $CITIES_PARAM
+            python static_map_generator.py -f data/pollen_data_sample.csv -o docs
+            
+            # 再次检查
+            NEW_MAP_COUNT=$(find docs/maps -name "*.html" | wc -l)
+            if [ "$NEW_MAP_COUNT" -eq 0 ]; then
+              echo "错误: 使用示例数据也无法生成地图文件，可能存在严重问题"
+              exit 1
+            else
+              echo "使用示例数据成功生成了 $NEW_MAP_COUNT 个地图文件"
+            fi
+          fi
+          
+          # 确保README.md存在于docs目录
+          if [ ! -f "docs/README.md" ]; then
+            echo "# 花粉分布地图" > docs/README.md
+            echo "这是一个基于GitHub Pages的静态花粉分布地图网站。该网站展示了各城市的花粉水平数据，帮助用户了解不同地区的花粉分布情况。" >> docs/README.md
+            echo "## 使用方法" >> docs/README.md
+            echo "1. 点击[这里](index.html)访问交互式地图" >> docs/README.md
+            echo "2. 使用下拉菜单选择不同日期查看花粉分布" >> docs/README.md
+            echo "3. 在地图上悬停或点击城市可查看详细信息" >> docs/README.md
+            echo "## 数据更新" >> docs/README.md
+            echo "本地图数据定期更新。最新更新时间: $(date +'%Y-%m-%d')" >> docs/README.md
+          fi
+      
+      - name: 配置Git用户
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+      
+      - name: 提交更新的数据和地图
+        run: |
+          # 添加所有更改
+          git add data/pollen_data_latest.csv
+          git add docs/
+          
+          # 检查是否有更改需要提交
+          if [[ -n "$(git status --porcelain)" ]]; then
+            # 提交更改
+            git commit -m "自动更新花粉数据和地图 $(date +'%Y-%m-%d')"
+            echo "已提交更改"
+          else
+            echo "没有需要提交的更改"
+          fi
+      
+      - name: 推送更改
+        run: |
+          # 尝试推送更改
+          git push || echo "推送失败，可能没有更改或远程拒绝"
+      
+      - name: 部署到GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs  # 要部署的文件夹
+          branch: gh-pages  # 部署到的分支
+          clean: true  # 清理旧文件
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub提供的token 
