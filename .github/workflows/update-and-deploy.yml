@@ -106,6 +106,12 @@ jobs:
           # 确保输出目录存在
           mkdir -p docs/maps
           
+          # 强制清理旧的地图文件和index.html
+          echo "清理旧的地图文件和index.html..."
+          rm -f docs/index.html
+          rm -rf docs/maps
+          mkdir -p docs/maps
+          
           # 检查数据文件是否有足够的行数
           FILE_LINES=$(wc -l < data/pollen_data_latest.csv)
           echo "数据文件行数: $FILE_LINES"
@@ -213,6 +219,10 @@ jobs:
           folder: docs  # 要部署的文件夹
           branch: gh-pages  # 部署到的分支
           clean: true  # 清理旧文件
+          clean-exclude: |  # 排除不需要清理的文件
+            .gitignore
+            README.md
+          force: true  # 强制部署，覆盖任何冲突
           token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub提供的token 
       
       - name: 验证部署
