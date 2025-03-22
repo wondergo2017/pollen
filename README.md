@@ -1,10 +1,12 @@
 # 花粉数据可视化系统
 
-基于Python开发的花粉数据分析与可视化工具，可处理多城市花粉水平数据并生成直观的可视化图表，帮助用户分析和理解花粉趋势数据。
+基于Python开发的花粉数据分析与可视化工具，可处理多城市花粉水平数据并生成直观的可视化图表和地图，帮助用户分析和理解花粉趋势数据。
 
 ## 功能特点
 
-- **多样化可视化**：支持趋势图、分布图等多种可视化类型
+- **多样化可视化**：支持趋势图、分布图、地图等多种可视化类型
+- **交互式地图**：基于PyEcharts的交互式花粉分布地图
+- **静态地图生成**：支持生成静态花粉分布地图
 - **多城市支持**：可同时分析和比较多个城市的花粉数据
 - **灵活筛选**：按城市、日期范围等条件筛选数据
 - **命令行工具**：提供便捷的命令行接口进行数据可视化
@@ -20,6 +22,8 @@
   - numpy
   - seaborn (用于高级可视化)
   - requests (用于数据获取)
+  - flask (用于地图服务器)
+  - pyecharts (用于交互式地图)
 
 ## 项目结构
 
@@ -31,29 +35,38 @@
 │   │   ├── pollen_visualization.py  # 通用可视化逻辑
 │   │   ├── trend_visualization.py   # 趋势图可视化
 │   │   ├── distribution_visualization.py # 分布图可视化
-│   │   ├── data_loading.py     # 数据加载
-│   │   ├── utils.py            # 工具函数
-│   │   └── main.py             # 可视化主模块
+│   │   ├── map_visualization.py     # 地图可视化
+│   │   ├── static_map.py            # 静态地图生成
+│   │   ├── data_loading.py          # 数据加载
+│   │   ├── utils.py                 # 工具函数
+│   │   └── main.py                  # 可视化主模块
 │   ├── config/             # 配置相关代码
 │   │   ├── __init__.py
 │   │   └── visualization_config.py  # 可视化配置
 │   ├── data/               # 数据处理代码
 │   └── __init__.py
 ├── data/                   # 数据文件目录
-│   ├── sample_pollen_data.csv  # 示例数据
-│   ├── sample_data.csv
-│   └── pollen_data_*.csv       # 花粉数据文件
+│   ├── sample_pollen_data.csv       # 示例花粉数据
+│   ├── sample_pollen_map_data.csv   # 示例地图数据
+│   ├── sample_pollen_static_map_data.csv # 示例静态地图数据
+│   ├── sample_map_server_data.csv   # 示例地图服务器数据
+│   ├── sample_pyecharts_map_data.csv # 示例PyEcharts地图数据
+│   └── pollen_data_*.csv            # 花粉数据文件
 ├── examples/               # 示例脚本
-│   ├── visualize_example.py    # 可视化示例
-│   ├── data_example.py         # 数据处理示例
-│   └── run_visualization.py    # 交互式可视化脚本
+│   ├── visualize_example.py         # 可视化示例
+│   ├── data_example.py              # 数据处理示例
+│   └── run_visualization.py         # 交互式可视化脚本
 ├── scripts/                # 辅助脚本
-│   └── install_fonts.py        # 字体安装脚本
+│   └── install_fonts.py             # 字体安装脚本
 ├── output/                 # 输出文件目录
+├── html/                   # HTML模板和静态文件目录
+│   ├── templates/                   # Flask模板目录
+│   └── static/                      # 静态资源目录
 ├── docs/                   # 文档目录
 ├── tests/                  # 测试目录
 ├── pollen_viz.py           # 命令行工具主入口
 ├── pollen_data_tool.py     # 数据处理工具入口
+├── map_server_example.py   # 地图服务器示例
 ├── setup.py                # 安装配置
 └── README.md               # 项目说明文档
 ```
@@ -122,6 +135,23 @@ python examples/run_visualization.py
 python examples/run_visualization.py --file data/pollen_data_2025-03-22.csv
 ```
 
+### 交互式地图服务器
+
+启动基于PyEcharts和Flask的交互式地图服务器：
+
+```bash
+# 启动地图服务器
+python map_server_example.py -f data/pollen_data_2025-03-22.csv
+
+# 指定端口启动
+python map_server_example.py -f data/pollen_data_2025-03-22.csv -p 8000
+
+# 不自动打开浏览器
+python map_server_example.py -f data/pollen_data_2025-03-22.csv --no-browser
+```
+
+启动后，可以通过浏览器访问 http://localhost:8088 (或指定端口) 查看交互式地图。
+
 ### 在Python代码中使用
 
 ```python
@@ -145,12 +175,13 @@ print(f"趋势图已生成：{output_file}")
 ## 数据文件格式
 
 项目支持处理的CSV数据格式包含以下字段：
-- `city`: 城市名称
-- `date`: 日期（格式：YYYY-MM-DD）
-- `pollen_level`: 花粉等级（很低、较低、偏高、较高、很高等）
-- `pollen_count`: 花粉数量
-- `color_code`: 花粉等级对应的颜色代码
-- `notes`: 过敏反应提示信息
+- `日期`: 日期（格式：YYYY-MM-DD）
+- `城市`: 城市名称
+- `花粉等级`: 花粉等级（暂无、很低、较低、偏高、较高、很高等）
+- `等级描述`: 花粉等级的文字描述
+- `颜色代码`: 花粉等级对应的颜色代码
+- `城市ID`: 城市ID编码
+- `城市代码`: 城市代码（拼音）
 
 ## 示例
 
@@ -190,6 +221,25 @@ python scripts/install_fonts.py
 FONT_FAMILY = "你的系统中可用的中文字体名称"
 ```
 
+### 地图服务器问题
+
+如果启动地图服务器时遇到问题：
+
+1. 确保已安装所需依赖：
+```bash
+pip install flask pyecharts
+```
+
+2. 检查端口是否被占用，尝试使用其他端口：
+```bash
+python map_server_example.py -p 8000
+```
+
+3. 如果自动打开浏览器失败，请手动访问：
+```
+http://localhost:8088  # 或指定的端口
+```
+
 ### 其他问题
 
 如果遇到其他问题或需要更多帮助，请：
@@ -203,4 +253,4 @@ SPI2 Team
 
 ## 许可证
 
-[指定许可证类型] 
+MIT许可证 
