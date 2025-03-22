@@ -141,7 +141,7 @@ python examples/run_visualization.py --file data/pollen_data_2025-03-22.csv
 
 ```bash
 # 启动地图服务器
-python map_server_example.py -f data/pollen_data_2025-03-22.csv
+python map_server_example.py -f data/pollen_data_latest.csv
 
 # 指定端口启动
 python map_server_example.py -f data/pollen_data_2025-03-22.csv -p 8000
