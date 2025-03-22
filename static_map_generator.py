@@ -92,6 +92,16 @@ def load_data(file_path):
             print(f"转换日期格式时出错: {str(e)}")
             return False
         
+        # 过滤出2025年的日期
+        df = df[df['日期'].str.startswith('2025')]
+        if len(df) == 0:
+            print("警告：数据中没有2025年的记录，将使用所有可用日期")
+            # 如果没有2025年的记录，恢复使用原始数据
+            df = pd.read_csv(file_path)
+            df['日期'] = pd.to_datetime(df['日期']).dt.strftime('%Y-%m-%d')
+        else:
+            print("成功过滤出2025年的记录")
+        
         # 提取可用日期
         available_dates = sorted(df['日期'].unique())
         

@@ -214,3 +214,53 @@ jobs:
           branch: gh-pages  # 部署到的分支
           clean: true  # 清理旧文件
           token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub提供的token 
+      
+      - name: 验证部署
+        run: |
+          echo "验证部署是否成功..."
+          
+          # 检出gh-pages分支
+          git fetch origin gh-pages
+          git checkout gh-pages
+          
+          # 检查index.html是否存在以及其内容
+          if [ ! -f "index.html" ]; then
+            echo "错误: index.html不存在于gh-pages分支"
+            exit 1
+          fi
+          
+          # 检查index.html中的日期选项
+          DATE_OPTIONS=$(grep -c "option value=\"2025" index.html || echo "0")
+          echo "2025年日期选项数量: $DATE_OPTIONS"
+          
+          # 检查iframe引用
+          IFRAME_SRC=$(grep -o '<iframe id="mapFrame" src="maps/map_[^"]*\.html"' index.html | grep -o 'maps/map_[^"]*\.html')
+          echo "iframe src: $IFRAME_SRC"
+          
+          # 验证引用的地图文件是否存在
+          if [ -n "$IFRAME_SRC" ] && [ ! -f "$IFRAME_SRC" ]; then
+            echo "警告: iframe引用的地图文件不存在: $IFRAME_SRC"
+            echo "尝试修复..."
+            
+            # 查找第一个可用的2025年地图文件
+            LATEST_MAP=$(find maps -name "map_2025*.html" | sort | tail -1)
+            if [ -n "$LATEST_MAP" ]; then
+              # 如果找到2025年的地图文件，使用它
+              LATEST_MAP_NAME=$(basename "$LATEST_MAP")
+              echo "使用最新的2025年地图文件: $LATEST_MAP_NAME"
+              # 替换iframe的src属性
+              sed -i "s|<iframe id=\"mapFrame\" src=\"[^\"]*\"|<iframe id=\"mapFrame\" src=\"maps/$LATEST_MAP_NAME\"|" index.html
+              # 提交更改
+              git config --global user.name "GitHub Actions Bot"
+              git config --global user.email "actions@github.com"
+              git add index.html
+              git commit -m "修复iframe引用，指向最新的2025年地图文件"
+              git push origin gh-pages
+              echo "已修复并推送更改"
+            else
+              echo "错误: 未找到2025年的地图文件"
+            fi
+          fi
+          
+          # 返回main分支
+          git checkout main 
