@@ -12,12 +12,12 @@ import pandas as pd
 import numpy as np
 import argparse
 import json
+import re
 from datetime import datetime
 from pyecharts import options as opts
 from pyecharts.charts import Map, Geo, EffectScatter, Grid
 from pyecharts.globals import ThemeType
 from pyecharts.commons.utils import JsCode
-import re
 import tempfile
 import csv
 import random
@@ -390,30 +390,30 @@ def create_map(date_str):
                 ),
                 itemstyle_opts=opts.ItemStyleOpts(opacity=0.8),
                 tooltip_opts=opts.TooltipOpts(
-                    formatter=JsCode(
-                        """function(params) {
-                            var levelMap = {
-                                0: '暂无',
-                                1: '很低',
-                                2: '低',
-                                3: '较低',
-                                4: '中',
-                                5: '偏高',
-                                6: '高',
-                                7: '较高',
-                                8: '很高',
-                                9: '极高'
-                            };
-                            var value = params.value[2];
-                            var levelText = levelMap[value] || '未知';
-                            
-                            // 检测是否为移动设备，如果是则添加提示
-                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                            var touchTip = isMobile ? '<br/>(点击可放大地图)' : '';
-                            
-                            return params.name + '<br/>花粉等级: ' + levelText + touchTip;
-                        }"""
-                    )
+                    formatter=JsCode("""
+function(params) {
+    var levelMap = {
+        0: '暂无',
+        1: '很低',
+        2: '低',
+        3: '较低',
+        4: '中',
+        5: '偏高',
+        6: '高',
+        7: '较高',
+        8: '很高',
+        9: '极高'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '未知';
+    
+    // 检测是否为移动设备，如果是则添加提示
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(点击可放大地图)' : '';
+    
+    return params.name + '<br/>花粉等级: ' + levelText + touchTip;
+}
+""")
                 )
             )
         
@@ -864,6 +864,20 @@ def generate_static_maps(file_path, output_dir=None):
     </style>
 """
             html_content = html_content.replace("</head>", responsive_style + "</head>")
+            
+            # 修复formatter函数格式问题
+            # 定义格式化后的formatter函数
+            formatted_form = '"formatter": function(params) {\n    var levelMap = {\n        0: \'\\u6682\\u65e0\',\n        1: \'\\u5f88\\u4f4e\',\n        2: \'\\u4f4e\',\n        3: \'\\u8f83\\u4f4e\',\n        4: \'\\u4e2d\',\n        5: \'\\u504f\\u9ad8\',\n        6: \'\\u9ad8\',\n        7: \'\\u8f83\\u9ad8\',\n        8: \'\\u5f88\\u9ad8\',\n        9: \'\\u6781\\u9ad8\'\n    };\n    var value = params.value[2];\n    var levelText = levelMap[value] || \'\\u672a\\u77e5\';\n    \n    // \\u68c0\\u6d4b\\u662f\\u5426\\u4e3a\\u79fb\\u52a8\\u8bbe\\u5907\\uff0c\\u5982\\u679c\\u662f\\u5219\\u6dfb\\u52a0\\u63d0\\u793a\n    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);\n    var touchTip = isMobile ? \'<br/>(\\u70b9\\u51fb\\u53ef\\u653e\\u5927\\u5730\\u56fe)\' : \'\';\n    \n    return params.name + \'<br/>\\u82b1\\u7c89\\u7b49\\u7ea7: \' + levelText + touchTip;\n}'
+            
+            def replace_formatter(match):
+                return formatted_form + ','
+            
+            # 使用更复杂的正则表达式来匹配嵌套的花括号
+            html_content = re.sub(
+                r'"formatter": function\(params\) \{(?:[^{}]|(?:\{[^{}]*\}))*\},',
+                replace_formatter,
+                html_content
+            )
             
             # 写入最终HTML文件
             with open(map_file_path, 'w', encoding='utf-8') as f:
