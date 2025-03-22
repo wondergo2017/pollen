@@ -45,10 +45,10 @@
     </style>
 </head>
 <body >
-    <div id="8ecbf109a4084c0287c38a6f562d4b49" class="chart-container" style="width:100%; height:600px; "></div>
+    <div id="8027efe2f94f4039ba37cd4a4489f16b" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_8ecbf109a4084c0287c38a6f562d4b49 = echarts.init(
-            document.getElementById('8ecbf109a4084c0287c38a6f562d4b49'), 'light', {renderer: 'canvas'});
+        var chart_8027efe2f94f4039ba37cd4a4489f16b = echarts.init(
+            document.getElementById('8027efe2f94f4039ba37cd4a4489f16b'), 'light', {renderer: 'canvas'});
             
         // 修复chart未定义的问题
         document.addEventListener('DOMContentLoaded', function() {
@@ -85,6 +85,14 @@
                             
                             // 更新图表，设置notMerge为false以确保只更新变化的部分，不影响其他配置
                             chart.setOption(option, {notMerge: false});
+                        }
+                        
+                        // 尝试修复图例顺序
+                        if (option.legend && option.legend.length > 0) {
+                            // 设置图例顺序
+                            var orderedLegend = ['暂无', '很低', '低', '中', '高', '很高', '极高'];
+                            option.legend[0].data = orderedLegend;
+                            chart.setOption({legend: option.legend}, {notMerge: false});
                         }
                     }
                 }
@@ -140,12 +148,15 @@
                     }, false);
                 }
                 
-                // 初始调整大小
-                setTimeout(resizeChart, 100);
+                // 初始调整大小和同步地图
+                setTimeout(function() {
+                    resizeChart();
+                    syncMaps();
+                }, 200);
             }
         });
         
-        var option_8ecbf109a4084c0287c38a6f562d4b49 = {
+        var option_8027efe2f94f4039ba37cd4a4489f16b = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -288,188 +299,6 @@
         },
         {
             "type": "effectScatter",
-            "name": "\u5f88\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#FF2319"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u5317\u4eac",
-                    "value": [
-                        116.407526,
-                        39.90403,
-                        5
-                    ]
-                },
-                {
-                    "name": "\u6210\u90fd",
-                    "value": [
-                        104.06,
-                        30.67,
-                        5
-                    ]
-                },
-                {
-                    "name": "\u90d1\u5dde",
-                    "value": [
-                        113.65,
-                        34.76,
-                        5
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u4e2d',
-        4: '\u9ad8',
-        5: '\u5f88\u9ad8',
-        6: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u4f4e",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#A1FF3D"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u4e0a\u6d77",
-                    "value": [
-                        121.473701,
-                        31.230416,
-                        2
-                    ]
-                },
-                {
-                    "name": "\u82cf\u5dde",
-                    "value": [
-                        120.62,
-                        31.32,
-                        2
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u4e2d',
-        4: '\u9ad8',
-        5: '\u5f88\u9ad8',
-        6: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
             "name": "\u6682\u65e0",
             "coordinateSystem": "geo",
             "showEffectOn": "render",
@@ -600,6 +429,175 @@
             "itemStyle": {
                 "opacity": 0.8
             },
+            "z": 0,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u5f88\u4f4e",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#81CB31"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u5929\u6d25",
+                    "value": [
+                        117.200983,
+                        39.084158,
+                        1
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 1,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u4f4e",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#A1FF3D"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u4e0a\u6d77",
+                    "value": [
+                        121.473701,
+                        31.230416,
+                        2
+                    ]
+                },
+                {
+                    "name": "\u82cf\u5dde",
+                    "value": [
+                        120.62,
+                        31.32,
+                        2
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 2,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         },
@@ -687,6 +685,7 @@
             "itemStyle": {
                 "opacity": 0.8
             },
+            "z": 3,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         },
@@ -774,6 +773,103 @@
             "itemStyle": {
                 "opacity": 0.8
             },
+            "z": 4,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u5f88\u9ad8",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#FF2319"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u5317\u4eac",
+                    "value": [
+                        116.407526,
+                        39.90403,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u6210\u90fd",
+                    "value": [
+                        104.06,
+                        30.67,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u90d1\u5dde",
+                    "value": [
+                        113.65,
+                        34.76,
+                        5
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 5,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         },
@@ -861,85 +957,7 @@
             "itemStyle": {
                 "opacity": 0.8
             },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u5f88\u4f4e",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#81CB31"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u5929\u6d25",
-                    "value": [
-                        117.200983,
-                        39.084158,
-                        1
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u4e2d',
-        4: '\u9ad8',
-        5: '\u5f88\u9ad8',
-        6: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
+            "z": 6,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         }
@@ -972,13 +990,13 @@
         },
         {
             "data": [
-                "\u5f88\u9ad8",
-                "\u4f4e",
                 "\u6682\u65e0",
+                "\u5f88\u4f4e",
+                "\u4f4e",
                 "\u4e2d",
                 "\u9ad8",
-                "\u6781\u9ad8",
-                "\u5f88\u4f4e"
+                "\u5f88\u9ad8",
+                "\u6781\u9ad8"
             ],
             "selected": {},
             "show": true,
@@ -999,7 +1017,16 @@
             "selector": false,
             "selectorPosition": "auto",
             "selectorItemGap": 7,
-            "selectorButtonGap": 10
+            "selectorButtonGap": 10,
+            "type": "scroll",
+            "selectedMode": false,
+            "left": "right",
+            "top": "center",
+            "orient": "vertical",
+            "textStyle": {
+                "color": "#333"
+            },
+            "icon": "circle"
         }
     ],
     "tooltip": {
@@ -1058,7 +1085,7 @@
                 "fontSize": 12
             },
             "inRange": {},
-            "calculable": true,
+            "calculable": false,
             "inverse": false,
             "splitNumber": 5,
             "hoverLink": true,
@@ -1123,9 +1150,9 @@
         "emphasis": {}
     }
 };
-        chart_8ecbf109a4084c0287c38a6f562d4b49.setOption(option_8ecbf109a4084c0287c38a6f562d4b49);
+        chart_8027efe2f94f4039ba37cd4a4489f16b.setOption(option_8027efe2f94f4039ba37cd4a4489f16b);
             window.addEventListener('resize', function(){
-                chart_8ecbf109a4084c0287c38a6f562d4b49.resize();
+                chart_8027efe2f94f4039ba37cd4a4489f16b.resize();
             })
     </script>
 </body>
