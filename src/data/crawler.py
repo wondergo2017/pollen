@@ -181,7 +181,22 @@ def filter_cities(cities_list, selected_cities):
     if not selected_cities:
         return cities_list
     
-    return [city for city in cities_list if city["en"] in selected_cities]
+    # 打印调试信息
+    print(f"筛选城市，选定的城市代码: {selected_cities}")
+    
+    # 确保selected_cities是列表
+    if isinstance(selected_cities, str):
+        selected_cities = [selected_cities]
+    
+    filtered_cities = [city for city in cities_list if city["en"] in selected_cities]
+    
+    # 打印筛选结果
+    if filtered_cities:
+        print(f"筛选结果: {[city['cn'] for city in filtered_cities]}")
+    else:
+        print(f"警告: 未找到匹配的城市，请检查城市代码是否正确")
+    
+    return filtered_cities
 
 def get_city_name(city_code):
     """
