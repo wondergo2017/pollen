@@ -4,6 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>花粉分布地图服务</title>
+  <!-- 添加备用的ECharts库，以防地图内部的CDN加载失败 -->
+  <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+  <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/extension/dataTool.min.js"></script>
+  <script type="text/javascript">
+    // 备用的中国地图数据
+    window.backupChinaMapLoaded = false;
+    function loadBackupChinaMap() {
+      if (!window.backupChinaMapLoaded) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/map/js/china.js';
+        script.onerror = function() {
+          console.error('备用中国地图数据加载失败');
+          document.getElementById('loadingMessage').innerHTML = '地图数据加载失败，请检查网络连接或稍后再试';
+        };
+        document.head.appendChild(script);
+        window.backupChinaMapLoaded = true;
+      }
+    }
+    // 在5秒后如果地图还未加载成功，尝试加载备用的中国地图数据
+    setTimeout(loadBackupChinaMap, 5000);
+  </script>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -45,6 +66,16 @@
     #loadingMessage {
       margin-top: 20px;
       color: #e74c3c;
+      font-weight: bold;
+    }
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    .info {
+      color: #3498db;
+      margin-top: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -64,12 +95,17 @@
       <button onclick="updateMap()">查看地图</button>
     </div>
     <div id="loadingMessage">正在加载地图，请稍候...</div>
+    <div id="infoMessage" class="info">
+      2025年3月22日数据显示: 北京、郑州等城市花粉水平偏高(5级)，武汉花粉水平较高(7级)，六盘水花粉水平极高(9级)
+    </div>
     <iframe id="mapFrame"></iframe>
   </div>
 
   <script>
     // 设置默认日期
     let currentDate = '2025-03-22';
+    let loadAttempts = 0;
+    const MAX_ATTEMPTS = 3;
     
     // 获取基础URL
     function getBaseUrl() {
@@ -87,30 +123,67 @@
       return '';
     }
     
+    // 日期对应的数据摘要（临时添加，方便用户了解每天的数据状况）
+    const dateSummary = {
+      '2025-03-16': '北京花粉水平偏高(5级)，西安花粉水平较高(7级)',
+      '2025-03-17': '武汉花粉水平较高(7级)，成都花粉水平偏高(5级)',
+      '2025-03-18': '上海花粉水平偏高(5级)，广州花粉水平很低(1级)',
+      '2025-03-19': '深圳花粉水平很低(1级)，长春花粉水平偏高(5级)',
+      '2025-03-20': '天津花粉水平偏高(5级)，哈尔滨花粉水平较高(7级)',
+      '2025-03-21': '南京花粉水平偏高(5级)，杭州花粉水平很低(1级)',
+      '2025-03-22': '北京、郑州等城市花粉水平偏高(5级)，武汉花粉水平较高(7级)，六盘水花粉水平极高(9级)'
+    };
+    
     // 加载地图
     function loadMap(date) {
       document.getElementById('loadingMessage').style.display = 'block';
+      document.getElementById('loadingMessage').innerHTML = '正在加载地图，请稍候...';
+      document.getElementById('mapFrame').style.display = 'none';
+      
+      // 更新数据摘要信息
+      const infoEl = document.getElementById('infoMessage');
+      infoEl.innerHTML = dateSummary[date] || `${date}的花粉分布数据`;
+      
       const baseUrl = getBaseUrl();
       const mapUrl = `${baseUrl}maps/map_${date}.html`;
       console.log('加载地图:', mapUrl);
       
       // 设置iframe源
       const iframe = document.getElementById('mapFrame');
+      
+      // 处理加载成功
       iframe.onload = function() {
         document.getElementById('loadingMessage').style.display = 'none';
         iframe.style.display = 'block';
+        loadAttempts = 0; // 重置尝试次数
       };
       
+      // 处理加载失败
       iframe.onerror = function() {
-        console.error('地图加载失败');
-        document.getElementById('loadingMessage').innerHTML = '地图加载失败，请重试或选择其他日期';
+        loadAttempts++;
+        console.error(`地图加载失败，第${loadAttempts}次尝试`);
+        
+        if (loadAttempts < MAX_ATTEMPTS) {
+          // 尝试使用备用CDN
+          loadBackupChinaMap();
+          document.getElementById('loadingMessage').innerHTML = `正在尝试备用加载方式 (${loadAttempts}/${MAX_ATTEMPTS})...`;
+          // 1秒后重试
+          setTimeout(function() {
+            iframe.src = mapUrl + '?retry=' + loadAttempts;
+          }, 1000);
+        } else {
+          document.getElementById('loadingMessage').innerHTML = '<span class="error">地图加载失败</span><br>可能原因：网络问题或CDN资源无法访问<br>请尝试：清除浏览器缓存或稍后再试';
+          iframe.style.display = 'none';
+        }
       };
       
-      iframe.src = mapUrl;
+      // 加载地图
+      iframe.src = mapUrl + (loadAttempts > 0 ? '?retry=' + loadAttempts : '');
     }
     
     function updateMap() {
       currentDate = document.getElementById('dateSelect').value;
+      loadAttempts = 0; // 重置尝试次数
       loadMap(currentDate);
     }
     
