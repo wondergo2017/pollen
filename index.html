@@ -81,12 +81,6 @@
             color: #666;
             font-size: 14px;
         }
-        .note {
-            font-style: italic;
-            font-size: 12px;
-            margin-top: 5px;
-            color: #888;
-        }
         
         /* 响应式设计 */
         @media (max-width: 600px) {
@@ -137,8 +131,7 @@
             <iframe id="mapFrame" src="" frameborder="0"></iframe>
         </div>
         <div class="footer">
-            <p>数据更新时间: 2025-03-22 12:26:26</p>
-            <p class="note">注意：本站显示的是中国标准时间（东八区）的花粉数据，仅显示当前及过去日期的信息。</p>
+            数据更新时间: 2025-03-22 12:44:19
         </div>
     </div>
 
@@ -148,21 +141,11 @@
             document.getElementById('mapFrame').src = './maps/map_' + date + '.html';
         }
         
-        // 初始化默认地图 - 使用最近的日期
+        // 初始化默认地图
         window.onload = function() {
-            // 将下拉框设置为最新日期
-            var latestDate = "2025-03-23";
-            if (latestDate) {
-                // 设置下拉框选中值
-                var selectElem = document.getElementById('dateSelect');
-                for(var i = 0; i < selectElem.options.length; i++) {
-                    if(selectElem.options[i].value === latestDate) {
-                        selectElem.selectedIndex = i;
-                        break;
-                    }
-                }
-                // 直接加载最新日期的地图
-                document.getElementById('mapFrame').src = './maps/map_' + latestDate + '.html';
+            var defaultDate = document.getElementById('dateSelect').value;
+            if (defaultDate) {
+                document.getElementById('mapFrame').src = './maps/map_' + defaultDate + '.html';
             }
         }
     </script>

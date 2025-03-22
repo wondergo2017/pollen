@@ -45,10 +45,10 @@
     </style>
 </head>
 <body >
-    <div id="fc8dd509fc2941fa9e14b2b887cf9acf" class="chart-container" style="width:100%; height:600px; "></div>
+    <div id="b4cca17070b3498d87f763a789ce6f02" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_fc8dd509fc2941fa9e14b2b887cf9acf = echarts.init(
-            document.getElementById('fc8dd509fc2941fa9e14b2b887cf9acf'), 'light', {renderer: 'canvas'});
+        var chart_b4cca17070b3498d87f763a789ce6f02 = echarts.init(
+            document.getElementById('b4cca17070b3498d87f763a789ce6f02'), 'light', {renderer: 'canvas'});
             
         // 修复chart未定义的问题
         document.addEventListener('DOMContentLoaded', function() {
@@ -145,7 +145,7 @@
             }
         });
         
-        var option_fc8dd509fc2941fa9e14b2b887cf9acf = {
+        var option_b4cca17070b3498d87f763a789ce6f02 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -317,7 +317,28 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;                        },
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u8f83\u4f4e',
+        4: '\u4e2d',
+        5: '\u504f\u9ad8',
+        6: '\u9ad8',
+        7: '\u8f83\u9ad8',
+        8: '\u5f88\u9ad8',
+        9: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -394,7 +415,28 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;                        },
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u8f83\u4f4e',
+        4: '\u4e2d',
+        5: '\u504f\u9ad8',
+        6: '\u9ad8',
+        7: '\u8f83\u9ad8',
+        8: '\u5f88\u9ad8',
+        9: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -463,7 +505,28 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;                        },
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u8f83\u4f4e',
+        4: '\u4e2d',
+        5: '\u504f\u9ad8',
+        6: '\u9ad8',
+        7: '\u8f83\u9ad8',
+        8: '\u5f88\u9ad8',
+        9: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -524,7 +587,28 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;                        },
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u8f83\u4f4e',
+        4: '\u4e2d',
+        5: '\u504f\u9ad8',
+        6: '\u9ad8',
+        7: '\u8f83\u9ad8',
+        8: '\u5f88\u9ad8',
+        9: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -585,7 +669,28 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;                        },
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u8f83\u4f4e',
+        4: '\u4e2d',
+        5: '\u504f\u9ad8',
+        6: '\u9ad8',
+        7: '\u8f83\u9ad8',
+        8: '\u5f88\u9ad8',
+        9: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -777,9 +882,9 @@
         "emphasis": {}
     }
 };
-        chart_fc8dd509fc2941fa9e14b2b887cf9acf.setOption(option_fc8dd509fc2941fa9e14b2b887cf9acf);
+        chart_b4cca17070b3498d87f763a789ce6f02.setOption(option_b4cca17070b3498d87f763a789ce6f02);
             window.addEventListener('resize', function(){
-                chart_fc8dd509fc2941fa9e14b2b887cf9acf.resize();
+                chart_b4cca17070b3498d87f763a789ce6f02.resize();
             })
     </script>
 </body>
