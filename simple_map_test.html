@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>简单花粉地图测试</title>
+    <!-- 使用可靠的CDN来加载ECharts和中国地图数据 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/map/js/china.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #control-panel {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        #map-container {
+            flex: 1;
+            min-height: 500px;
+        }
+        .btn {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="control-panel">
+            <button id="generate-btn" class="btn">生成测试地图</button>
+            <button id="clear-btn" class="btn">清除地图</button>
+            <span id="status"></span>
+        </div>
+        <div id="map-container"></div>
+    </div>
+    
+    <script>
+        // 页面加载完成后初始化
+        window.onload = function() {
+            const statusEl = document.getElementById('status');
+            let mapChart = null;
+            
+            // 确保ECharts已加载
+            if (typeof echarts === 'undefined') {
+                statusEl.textContent = 'ECharts库加载失败，请检查网络连接';
+                return;
+            }
+            
+            // 初始化地图
+            try {
+                mapChart = echarts.init(document.getElementById('map-container'));
+                statusEl.textContent = '地图引擎初始化成功';
+            } catch (error) {
+                statusEl.textContent = '地图初始化失败: ' + error.message;
+                return;
+            }
+            
+            // 生成测试数据按钮
+            document.getElementById('generate-btn').addEventListener('click', function() {
+                // 确保中国地图数据已加载
+                if (!echarts.getMap('china')) {
+                    statusEl.textContent = '中国地图数据未能正确加载，请刷新页面重试';
+                    return;
+                }
+                
+                // 生成随机测试数据
+                const provinces = ['北京', '上海', '广东', '江苏', '浙江', '山东', '河南', 
+                                  '四川', '湖北', '湖南', '河北', '福建', '陕西', '辽宁', 
+                                  '江西', '安徽', '黑龙江', '广西', '山西', '内蒙古', '重庆'];
+                const testData = [];
+                
+                provinces.forEach(province => {
+                    // 生成1-10的随机花粉水平
+                    const value = Math.floor(Math.random() * 10) + 1;
+                    testData.push({
+                        name: province,
+                        value: value
+                    });
+                });
+                
+                // 花粉级别与描述的映射
+                const levelMap = {
+                    0: "暂无",
+                    1: "很低",
+                    2: "低",
+                    3: "较低",
+                    4: "中等",
+                    5: "偏高",
+                    6: "高",
+                    7: "较高",
+                    8: "很高",
+                    9: "极高",
+                    10: "爆表"
+                };
+                
+                // 配置地图选项
+                const option = {
+                    title: {
+                        text: '花粉分布测试地图',
+                        left: 'center',
+                        top: 20,
+                        textStyle: {
+                            fontSize: 24
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: function(params) {
+                            const value = params.value || 0;
+                            const level = levelMap[value] || "未知";
+                            return params.name + '<br>花粉水平: ' + value + ' (' + level + ')';
+                        }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 10,
+                        left: 'left',
+                        top: 'bottom',
+                        text: ['高', '低'],
+                        calculable: true,
+                        inRange: {
+                            color: ['#50a3ba', '#eac736', '#d94e5d']
+                        }
+                    },
+                    series: [{
+                        name: '花粉水平',
+                        type: 'map',
+                        map: 'china',
+                        roam: true,
+                        label: {
+                            show: true
+                        },
+                        emphasis: {
+                            label: {
+                                show: true
+                            }
+                        },
+                        data: testData
+                    }]
+                };
+                
+                // 渲染地图
+                mapChart.setOption(option);
+                statusEl.textContent = '生成了' + testData.length + '个省份的随机花粉数据';
+            });
+            
+            // 清除地图按钮
+            document.getElementById('clear-btn').addEventListener('click', function() {
+                if (mapChart) {
+                    mapChart.clear();
+                    statusEl.textContent = '地图已清除';
+                }
+            });
+            
+            // 监听窗口大小变化，调整地图大小
+            window.addEventListener('resize', function() {
+                if (mapChart) {
+                    mapChart.resize();
+                }
+            });
+        };
+    </script>
+</body>
+</html> 
