@@ -11,10 +11,15 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 添加权限配置
+    permissions:
+      contents: write
     
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取完整历史记录以确保部署成功
         
       - name: 设置Python环境
         uses: actions/setup-python@v4
@@ -25,16 +30,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pandas numpy pyecharts
+          # 打印依赖版本便于调试
+          pip list
           
       - name: 生成静态地图文件
         run: |
+          # 创建输出目录
+          mkdir -p docs/maps
+          
+          # 运行地图生成脚本
           python static_map_generator.py -f data/sample_pollen_data.csv -o docs
-          # 如果有更新的数据文件，可以替换上面的命令使用最新的数据
-          # python static_map_generator.py -f data/pollen_data_最新日期.csv -o docs
+          
+          # 检查生成的文件
+          echo "生成的文件列表:"
+          ls -la docs/
+          echo "地图文件夹内容:"
+          ls -la docs/maps/
           
       - name: 部署到GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs  # 要部署的文件夹
           branch: gh-pages  # 部署到的分支
-          clean: true  # 清理旧文件 
+          clean: true  # 清理旧文件
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用GitHub提供的token 

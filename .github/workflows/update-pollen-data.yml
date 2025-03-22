@@ -8,10 +8,14 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取完整历史记录
         
       - name: 设置Python环境
         uses: actions/setup-python@v4
@@ -32,4 +36,18 @@ jobs:
         run: |
           python scripts/update_pollen_data.py --push
           
-      # 注意：推送动作已在脚本中处理 
+      # 触发部署工作流
+      - name: 等待更新数据提交
+        run: |
+          echo "等待10秒，确保数据更新提交已完成..."
+          sleep 10
+          
+      - name: 手动触发部署工作流
+        run: |
+          # 使用GitHub API触发部署工作流
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy-pollen-map.yml/dispatches \
+            -d '{"ref":"${{ github.ref }}"}' \
+            || echo "注意：无法自动触发部署工作流，但数据已更新" 

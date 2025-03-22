@@ -76,6 +76,23 @@ def update_data(data_dir="data", output_file=None, github_push=False):
         # Git添加文件
         run_command(f"git add {output_file}")
         
+        # 检查文件是否有变化
+        status_code, stdout, _ = run_command("git status --porcelain")
+        if not stdout.strip():
+            print("没有检测到文件变化，跳过提交")
+            return output_file
+            
+        # 尝试直接生成地图
+        try:
+            # 检查static_map_generator.py是否存在
+            if os.path.exists("static_map_generator.py"):
+                print("检测到static_map_generator.py，尝试直接生成地图...")
+                run_command(f"python static_map_generator.py -f {output_file} -o docs")
+                run_command("git add docs/")
+                print("地图文件已生成并添加到提交")
+        except Exception as e:
+            print(f"生成地图时出错: {str(e)}")
+        
         # Git提交
         commit_message = f"自动更新花粉数据 {today}"
         run_command(f'git commit -m "{commit_message}"')
