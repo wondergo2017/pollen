@@ -732,10 +732,15 @@ def create_index_html(output_dir):
         
         // 初始化默认地图
         window.onload = function() {
-            var defaultDate = document.getElementById('dateSelect').value;
-            if (defaultDate) {
-                document.getElementById('mapFrame').src = './maps/map_' + defaultDate + '.html';
-            }
+            // 获取所有选项
+            var selectElement = document.getElementById('dateSelect');
+            var options = selectElement.options;
+            
+            // 选择最后一个选项（假设选项是按日期排序的，最后一个是最新的）
+            selectElement.selectedIndex = options.length - 1;
+            
+            // 加载选定日期的地图
+            updateMap();
         }
     </script>
 </body>
