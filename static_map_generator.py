@@ -513,6 +513,36 @@ def create_map(date_str):
 
 def create_index_html(output_dir):
     """创建GitHub Pages适用的主页HTML"""
+    # 扫描maps目录以获取所有存在的地图文件
+    maps_dir = os.path.join(output_dir, "maps")
+    available_map_dates = []
+    
+    # 如果目录存在，扫描所有地图文件
+    if os.path.exists(maps_dir):
+        map_files = [f for f in os.listdir(maps_dir) if f.startswith("map_") and f.endswith(".html")]
+        for map_file in map_files:
+            # 从文件名中提取日期 (map_2025-03-22.html -> 2025-03-22)
+            date_match = re.search(r'map_(\d{4}-\d{2}-\d{2})\.html', map_file)
+            if date_match:
+                date_str = date_match.group(1)
+                if date_str not in available_map_dates:
+                    available_map_dates.append(date_str)
+    
+    # 注意：available_dates是全局变量，包含当前数据文件中的日期
+    # 确保我们只显示那些已经生成了地图的日期
+    if not available_map_dates:
+        print("警告: 没有找到地图文件。将使用当前数据中的日期列表。")
+        displayed_dates = available_dates
+    else:
+        print(f"在maps目录找到了 {len(available_map_dates)} 个日期的地图文件")
+        displayed_dates = sorted(available_map_dates)
+    
+    if not displayed_dates:
+        print("错误: 没有可用的日期可以显示。索引页将为空。")
+        displayed_dates = []
+    
+    print(f"索引页将包含 {len(displayed_dates)} 个日期的地图")
+    
     index_content = """
 <!DOCTYPE html>
 <html>
@@ -589,8 +619,8 @@ def create_index_html(output_dir):
             <select id="dateSelect">
 """
     
-    # 添加日期选项
-    for date in available_dates:
+    # 添加日期选项，只使用已确认存在的日期
+    for date in displayed_dates:
         index_content += f'                <option value="{date}">{date}</option>\n'
     
     index_content += """
@@ -784,6 +814,46 @@ def run_test_mode(output_dir):
     print(f"输出目录: {output_dir}")
     print("============================================================")
     
+    # 清理可能存在的多余文件 - 检查是否存在超出数据范围的日期文件
+    maps_dir = os.path.join(output_dir, "maps")
+    if os.path.exists(maps_dir):
+        # 首先查询源数据文件中存在的日期
+        data_dates = []
+        data_file = 'data/pollen_data_latest.csv'
+        if os.path.exists(data_file):
+            try:
+                df = pd.read_csv(data_file)
+                if '日期' in df.columns:
+                    data_dates = sorted(df['日期'].unique())
+            except Exception as e:
+                print(f"警告: 读取数据文件时出错: {str(e)}")
+        
+        # 如果无法读取数据文件，使用固定的有效日期范围
+        if not data_dates:
+            data_dates = [
+                '2025-03-16', '2025-03-17', '2025-03-18', '2025-03-19',
+                '2025-03-20', '2025-03-21', '2025-03-22', '2025-03-23'
+            ]
+        
+        # 找出所有不在有效日期范围内的地图文件
+        all_map_files = [f for f in os.listdir(maps_dir) if f.startswith("map_") and f.endswith(".html")]
+        extra_files = []
+        
+        for map_file in all_map_files:
+            date_match = re.search(r'map_(\d{4}-\d{2}-\d{2})\.html', map_file)
+            if date_match:
+                file_date = date_match.group(1)
+                if file_date not in data_dates:
+                    extra_files.append(map_file)
+        
+        # 删除多余文件
+        for file in extra_files:
+            try:
+                os.remove(os.path.join(maps_dir, file))
+                print(f"已删除多余文件: {file}")
+            except Exception as e:
+                print(f"删除文件 {file} 失败: {str(e)}")
+    
     # 创建临时测试数据文件
     with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8') as tmp:
         test_data_file = tmp.name
@@ -794,23 +864,28 @@ def run_test_mode(output_dir):
         
         # 生成测试数据
         test_cities = [
-            ('北京', '很低'), ('上海', '低'), ('广州', '较低'), ('深圳', '中'),
+            ('北京', '很高'), ('上海', '低'), ('广州', '较低'), ('深圳', '中'),
             ('杭州', '偏高'), ('南京', '高'), ('武汉', '较高'), ('成都', '很高'),
             ('重庆', '极高'), ('西安', '暂无'), ('天津', '很低'), ('苏州', '低'),
             ('沈阳', '较低'), ('哈尔滨', '中'), ('长春', '偏高'), ('长沙', '高'),
             ('福州', '较高'), ('郑州', '很高'), ('济南', '极高'), ('青岛', '暂无')
         ]
         
-        # 生成两个测试日期的数据
-        today = datetime.now().strftime('%Y-%m-%d')
-        tomorrow = (datetime.now() + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+        # 使用与实际数据文件匹配的固定日期范围
+        test_dates = [
+            '2025-03-16', '2025-03-17', '2025-03-18', '2025-03-19',
+            '2025-03-20', '2025-03-21', '2025-03-22', '2025-03-23'
+        ]
         
+        print(f"将为以下日期生成测试数据: {', '.join(test_dates)}")
+        
+        # 为每个城市在每个测试日期生成数据
         for city, level in test_cities:
-            writer.writerow([today, city, level])
-            writer.writerow([tomorrow, city, level])
+            for date in test_dates:
+                writer.writerow([date, city, level])
         
     print(f"已生成测试数据文件: {test_data_file}")
-    print(f"包含 {len(test_cities)} 个城市，每个城市 2 个日期的数据")
+    print(f"包含 {len(test_cities)} 个城市，每个城市 {len(test_dates)} 个日期的数据")
     
     # 使用测试数据生成地图
     try:
