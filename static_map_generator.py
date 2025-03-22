@@ -207,8 +207,8 @@ def create_map(date_str):
             
             # 将花粉等级映射为数值
             level_map = {
-                '暂无': 0, '很低': 1, '低': 2, '较低': 3, '中': 4,
-                '偏高': 5, '高': 6, '较高': 7, '很高': 8, '极高': 9
+                '暂无': 0, '很低': 1, '低': 2, '中': 3,
+                '高': 4, '很高': 5, '极高': 6
             }
             level_value = level_map.get(level, 0)
             
@@ -329,15 +329,12 @@ def create_map(date_str):
         # 颜色映射
         color_map = {
             0: "#C4A39F",  # 暂无
-            1: "#81CB31",  # 很低
-            2: "#A1FF3D",  # 低
-            3: "#C9FF76",  # 较低
-            4: "#F5EE32",  # 中
-            5: "#FFD429",  # 偏高
-            6: "#FF642E",  # 高
-            7: "#FFAF13",  # 较高
-            8: "#FF2319",  # 很高
-            9: "#CC0000"   # 极高
+            1: "#81CB31",  # 很低 - 冷色
+            2: "#A1FF3D",  # 低 - 冷色
+            3: "#F5EE32",  # 中 - 中性
+            4: "#FF642E",  # 高 - 暖色
+            5: "#FF2319",  # 很高 - 暖色
+            6: "#CC0000"   # 极高 - 暖色
         }
         
         # 等级文本映射
@@ -345,13 +342,10 @@ def create_map(date_str):
             0: '暂无',
             1: '很低',
             2: '低',
-            3: '较低',
-            4: '中',
-            5: '偏高',
-            6: '高',
-            7: '较高',
-            8: '很高',
-            9: '极高'
+            3: '中',
+            4: '高',
+            5: '很高',
+            6: '极高'
         }
         
         print("分组城市数据...")
@@ -396,13 +390,10 @@ function(params) {
         0: '暂无',
         1: '很低',
         2: '低',
-        3: '较低',
-        4: '中',
-        5: '偏高',
-        6: '高',
-        7: '较高',
-        8: '很高',
-        9: '极高'
+        3: '中',
+        4: '高',
+        5: '很高',
+        6: '极高'
     };
     var value = params.value[2];
     var levelText = levelMap[value] || '未知';
@@ -427,13 +418,10 @@ function(params) {
                     {"min": 0, "max": 0, "label": "暂无", "color": "#C4A39F"},
                     {"min": 1, "max": 1, "label": "很低", "color": "#81CB31"},
                     {"min": 2, "max": 2, "label": "低", "color": "#A1FF3D"},
-                    {"min": 3, "max": 3, "label": "较低", "color": "#C9FF76"},
-                    {"min": 4, "max": 4, "label": "中", "color": "#F5EE32"},
-                    {"min": 5, "max": 5, "label": "偏高", "color": "#FFD429"},
-                    {"min": 6, "max": 6, "label": "高", "color": "#FF642E"},
-                    {"min": 7, "max": 7, "label": "较高", "color": "#FFAF13"},
-                    {"min": 8, "max": 8, "label": "很高", "color": "#FF2319"},
-                    {"min": 9, "max": 9, "label": "极高", "color": "#CC0000"}
+                    {"min": 3, "max": 3, "label": "中", "color": "#F5EE32"},
+                    {"min": 4, "max": 4, "label": "高", "color": "#FF642E"},
+                    {"min": 5, "max": 5, "label": "很高", "color": "#FF2319"},
+                    {"min": 6, "max": 6, "label": "极高", "color": "#CC0000"}
                 ],
                 pos_left="2%",  # 调整到左侧
                 pos_top="middle",  # 垂直居中
@@ -870,9 +858,8 @@ def generate_static_maps(file_path, output_dir=None):
 """
             html_content = html_content.replace("</head>", responsive_style + "</head>")
             
-            # 修复formatter函数格式问题
-            # 定义格式化后的formatter函数
-            formatted_form = '"formatter": function(params) {\n    var levelMap = {\n        0: \'\\u6682\\u65e0\',\n        1: \'\\u5f88\\u4f4e\',\n        2: \'\\u4f4e\',\n        3: \'\\u8f83\\u4f4e\',\n        4: \'\\u4e2d\',\n        5: \'\\u504f\\u9ad8\',\n        6: \'\\u9ad8\',\n        7: \'\\u8f83\\u9ad8\',\n        8: \'\\u5f88\\u9ad8\',\n        9: \'\\u6781\\u9ad8\'\n    };\n    var value = params.value[2];\n    var levelText = levelMap[value] || \'\\u672a\\u77e5\';\n    \n    // \\u68c0\\u6d4b\\u662f\\u5426\\u4e3a\\u79fb\\u52a8\\u8bbe\\u5907\\uff0c\\u5982\\u679c\\u662f\\u5219\\u6dfb\\u52a0\\u63d0\\u793a\n    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);\n    var touchTip = isMobile ? \'<br/>(\\u70b9\\u51fb\\u53ef\\u653e\\u5927\\u5730\\u56fe)\' : \'\';\n    \n    return params.name + \'<br/>\\u82b1\\u7c89\\u7b49\\u7ea7: \' + levelText + touchTip;\n}'
+            # 修改formatter函数中的levelMap
+            formatted_form = '"formatter": function(params) {\n    var levelMap = {\n        0: \'\\u6682\\u65e0\',\n        1: \'\\u5f88\\u4f4e\',\n        2: \'\\u4f4e\',\n        3: \'\\u4e2d\',\n        4: \'\\u9ad8\',\n        5: \'\\u5f88\\u9ad8\',\n        6: \'\\u6781\\u9ad8\'\n    };\n    var value = params.value[2];\n    var levelText = levelMap[value] || \'\\u672a\\u77e5\';\n    \n    // \\u68c0\\u6d4b\\u662f\\u5426\\u4e3a\\u79fb\\u52a8\\u8bbe\\u5907\\uff0c\\u5982\\u679c\\u662f\\u5219\\u6dfb\\u52a0\\u63d0\\u793a\n    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);\n    var touchTip = isMobile ? \'<br/>(\\u70b9\\u51fb\\u53ef\\u653e\\u5927\\u5730\\u56fe)\' : \'\';\n    \n    return params.name + \'<br/>\\u82b1\\u7c89\\u7b49\\u7ea7: \' + levelText + touchTip;\n}'
             
             def replace_formatter(match):
                 return formatted_form + ','
