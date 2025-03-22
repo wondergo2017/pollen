@@ -12,6 +12,13 @@ import argparse
 from datetime import datetime
 import pandas as pd
 
+# 添加项目根目录到系统路径
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# 定义路径
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output', 'visualization_output')
+
 # 检查必要的库是否已安装
 try:
     import matplotlib.pyplot as plt
@@ -35,7 +42,7 @@ def configure_fonts():
     """配置matplotlib字体以支持中文"""
     try:
         # 尝试使用配置文件中的字体设置
-        from visualization_config import configure_matplotlib_fonts
+        from src.config.visualization_config import configure_matplotlib_fonts
         if configure_matplotlib_fonts():
             print("成功配置matplotlib字体设置")
             return True
@@ -88,45 +95,51 @@ def configure_fonts():
 def check_visualization_module():
     """检查可视化模块是否可用"""
     try:
-        import pollen_visualization
+        from src.visualization import pollen_visualization
         return True
     except ImportError:
         print("错误: 找不到pollen_visualization模块。")
-        print("请确保pollen_visualization.py文件在当前目录中。")
+        print("请确保src/visualization/pollen_visualization.py文件存在。")
         return False
 
 def find_data_files():
-    """在当前目录中查找花粉数据文件"""
+    """在数据目录中查找花粉数据文件"""
     data_files = []
     
+    # 确保数据目录存在
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+    
     # 查找CSV文件
-    csv_files = [f for f in os.listdir('.') if f.endswith('.csv')]
+    csv_files = [f for f in os.listdir(DATA_DIR) if f.endswith('.csv')]
     for csv_file in csv_files:
         try:
-            df = pd.read_csv(csv_file)
+            file_path = os.path.join(DATA_DIR, csv_file)
+            df = pd.read_csv(file_path)
             if all(col in df.columns for col in ['city', 'addTime', 'level']):
-                data_files.append((csv_file, len(df), df['city'].nunique()))
+                data_files.append((file_path, len(df), df['city'].nunique()))
         except:
             pass
     
     # 查找Excel文件
-    excel_files = [f for f in os.listdir('.') if f.endswith(('.xlsx', '.xls'))]
+    excel_files = [f for f in os.listdir(DATA_DIR) if f.endswith(('.xlsx', '.xls'))]
     for excel_file in excel_files:
         try:
-            df = pd.read_excel(excel_file)
+            file_path = os.path.join(DATA_DIR, excel_file)
+            df = pd.read_excel(file_path)
             if all(col in df.columns for col in ['city', 'addTime', 'level']):
-                data_files.append((excel_file, len(df), df['city'].nunique()))
+                data_files.append((file_path, len(df), df['city'].nunique()))
         except:
             pass
     
     return data_files
 
 def display_available_data_files():
-    """显示当前目录中可用的数据文件"""
+    """显示当前数据目录中可用的数据文件"""
     data_files = find_data_files()
     
     if not data_files:
-        print("没有找到可用的花粉数据文件。")
+        print(f"在 {DATA_DIR} 目录中没有找到可用的花粉数据文件。")
         print("请确保CSV或Excel文件包含'city'、'addTime'和'level'列。")
         return None
     
@@ -151,10 +164,10 @@ def display_available_data_files():
 def generate_sample_data():
     """生成示例数据（如果找不到现有数据）"""
     try:
-        from visualize_example import generate_sample_data, save_sample_data
+        from examples.visualize_example import generate_sample_data, save_sample_data
         print("正在生成示例数据...")
         df = generate_sample_data(num_cities=5, days=30)
-        file_path = save_sample_data(df, "sample_pollen_data.csv")
+        file_path = save_sample_data(df)
         print(f"已生成示例数据文件: {file_path}")
         return file_path
     except ImportError:
@@ -182,7 +195,12 @@ def generate_sample_data():
                 })
         
         df = pd.DataFrame(data)
-        file_path = "simple_sample_data.csv"
+        
+        # 确保数据目录存在
+        if not os.path.exists(DATA_DIR):
+            os.makedirs(DATA_DIR)
+        
+        file_path = os.path.join(DATA_DIR, "simple_sample_data.csv")
         df.to_csv(file_path, index=False)
         print(f"已创建简单示例数据: {file_path}")
         return file_path
@@ -195,7 +213,7 @@ def parse_arguments():
     parser.add_argument('--start_date', help='开始日期 (YYYY-MM-DD)')
     parser.add_argument('--end_date', help='结束日期 (YYYY-MM-DD)')
     parser.add_argument('--output', help='输出文件名')
-    parser.add_argument('--output_dir', default='visualization_output', help='输出目录')
+    parser.add_argument('--output_dir', default=OUTPUT_DIR, help='输出目录')
     parser.add_argument('--advanced', action='store_true', help='生成高级图表')
     parser.add_argument('--distribution', action='store_true', help='生成分布统计图表')
     parser.add_argument('--sample', action='store_true', help='使用示例数据')
@@ -295,9 +313,13 @@ def main():
         if args.sample:
             params['data_file'] = generate_sample_data()
     
+    # 确保输出目录存在
+    if not os.path.exists(params.get('output_dir', OUTPUT_DIR)):
+        os.makedirs(params.get('output_dir', OUTPUT_DIR))
+    
     # 运行可视化
     try:
-        import pollen_visualization as pv
+        from src.visualization import pollen_visualization as pv
         
         print("\n开始可视化...")
         
@@ -317,21 +339,21 @@ def main():
         df = pv.prepare_data_for_visualization(df)
         
         # 生成主趋势图
-        output_path = pv.visualize_pollen_trends(df, params.get('output_dir', 'visualization_output'), params.get('output'))
+        output_path = pv.visualize_pollen_trends(df, params.get('output_dir', OUTPUT_DIR), params.get('output'))
         print(f"主趋势图已保存为: {output_path}")
         
         # 生成高级图表
         if params.get('advanced'):
             print("\n生成高级图表...")
-            pv.create_advanced_charts(df, params.get('output_dir', 'visualization_output'))
+            pv.create_advanced_charts(df, params.get('output_dir', OUTPUT_DIR))
         
         # 生成分布统计图
         if params.get('distribution'):
             print("\n生成分布统计图...")
-            dist_path = pv.create_distribution_chart(df, params.get('output_dir', 'visualization_output'))
+            dist_path = pv.create_distribution_chart(df, params.get('output_dir', OUTPUT_DIR))
             print(f"分布统计图已保存为: {dist_path}")
         
-        print("\n可视化完成！所有图表已保存至目录: {}".format(os.path.abspath(params.get('output_dir', 'visualization_output'))))
+        print("\n可视化完成！所有图表已保存至目录: {}".format(os.path.abspath(params.get('output_dir', OUTPUT_DIR))))
         
     except Exception as e:
         print(f"可视化过程中出错: {str(e)}")

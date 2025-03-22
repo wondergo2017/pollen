@@ -1,31 +1,106 @@
-# 中国天气网花粉等级数据爬虫与可视化工具
+# 花粉数据可视化系统
 
-这个Python项目用于爬取[中国天气网](https://www.weather.com.cn/forecast/hf_index.shtml)上各城市的花粉等级数据，并提供强大的数据可视化功能。
-
-## 功能
-
-- 爬取中国天气网支持的50个城市的花粉等级数据
-- 获取近30天的历史花粉等级数据或指定日期范围的数据
-- 将数据保存为CSV或Excel格式
-- 自定义配置参数，包括日期范围、爬取间隔、输出格式等
-- 支持选择性爬取特定城市的数据
-- 自动重试机制，提高数据获取成功率
-- **高级数据可视化功能**：
-  - 多城市花粉等级趋势对比图
-  - 城市花粉等级分布统计图
-  - 热力图分析
-  - 自定义图表样式和配置
+这是一个用于花粉数据分析和可视化的Python工具，可以处理不同城市的花粉水平数据并生成直观的可视化图表。
 
 ## 项目结构
 
-- `pollen_scraper.py` - 主爬虫脚本
-- `config.py` - 爬虫配置文件
-- `test_single_city.py` - 单城市测试脚本
-- `pollen_visualization.py` - 可视化核心模块
-- `visualization_config.py` - 可视化配置文件
-- `visualize_example.py` - 示例数据生成与可视化脚本
-- `run_visualization.py` - 交互式可视化工具
-- `README.md` - 项目说明文档
+```
+.
+├── src/                    # 源代码目录
+│   ├── visualization/      # 可视化相关代码
+│   │   ├── __init__.py
+│   │   └── pollen_visualization.py  # 核心可视化逻辑
+│   ├── config/             # 配置相关代码
+│   │   ├── __init__.py
+│   │   └── visualization_config.py  # 可视化配置
+│   └── __init__.py
+├── data/                   # 数据文件目录
+│   ├── sample_pollen_data.csv       # 示例数据
+│   └── pollen_data_*.csv            # 各种花粉数据文件
+├── examples/               # 示例脚本
+│   ├── visualize_example.py         # 可视化示例
+│   └── run_visualization.py         # 运行可视化的脚本
+├── tests/                  # 测试文件目录
+│   ├── test_visualization.py        # 可视化测试
+│   ├── test_single_city.py          # 单城市数据测试
+│   └── test_output/                 # 测试输出目录
+├── output/                 # 输出文件目录
+│   └── visualization_output/        # 可视化输出
+├── setup.py                # 安装配置
+└── README.md               # 项目说明文档
+```
+
+## 安装
+
+1. 克隆仓库：
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+2. 安装依赖（推荐使用虚拟环境）：
+```bash
+pip install -e .
+```
+
+## 使用方法
+
+### 使用示例脚本
+
+直接运行示例脚本可以快速生成可视化效果：
+
+```bash
+python examples/run_visualization.py
+```
+
+该脚本会引导你选择数据文件、设置参数并生成花粉数据可视化图表。
+
+### 使用可视化模块
+
+也可以在自己的Python脚本中导入并使用可视化模块：
+
+```python
+from src.visualization import pollen_visualization as pv
+
+# 加载数据
+df = pv.load_data('data/sample_pollen_data.csv')
+
+# 过滤数据
+df = pv.filter_data(df, cities=['北京', '上海'], start_date='2025-03-01', end_date='2025-03-31')
+
+# 准备数据
+prepared_df = pv.prepare_data_for_visualization(df)
+
+# 生成可视化
+output_path = pv.visualize_pollen_trends(prepared_df, output_dir='output/visualization_output')
+print(f"已生成可视化：{output_path}")
+```
+
+## 测试
+
+运行测试来验证系统功能：
+
+```bash
+python tests/test_visualization.py
+python tests/test_single_city.py
+```
+
+## 要求
+
+- Python 3.6+
+- pandas
+- matplotlib
+- numpy
+- seaborn (可选，用于高级可视化)
+- requests (可选，用于数据获取)
+
+## 功能
+
+- 支持多城市花粉数据的加载和处理
+- 生成花粉水平趋势图和分布图
+- 支持数据过滤（按城市、日期范围）
+- 支持中文显示和多种输出格式
+- 可定制的可视化配置
 
 ## 数据内容
 
