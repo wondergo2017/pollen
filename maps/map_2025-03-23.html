@@ -45,10 +45,10 @@
     </style>
 </head>
 <body >
-    <div id="5cc865cdaf584c12beaedac8c669aba8" class="chart-container" style="width:100%; height:600px; "></div>
+    <div id="5dd0113e3f8b46cebe8ee8e56f7db855" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_5cc865cdaf584c12beaedac8c669aba8 = echarts.init(
-            document.getElementById('5cc865cdaf584c12beaedac8c669aba8'), 'light', {renderer: 'canvas'});
+        var chart_5dd0113e3f8b46cebe8ee8e56f7db855 = echarts.init(
+            document.getElementById('5dd0113e3f8b46cebe8ee8e56f7db855'), 'light', {renderer: 'canvas'});
             
         // 修复chart未定义的问题
         document.addEventListener('DOMContentLoaded', function() {
@@ -85,6 +85,14 @@
                             
                             // 更新图表，设置notMerge为false以确保只更新变化的部分，不影响其他配置
                             chart.setOption(option, {notMerge: false});
+                        }
+                        
+                        // 尝试修复图例顺序
+                        if (option.legend && option.legend.length > 0) {
+                            // 设置图例顺序
+                            var orderedLegend = ['暂无', '很低', '低', '中', '高', '很高', '极高'];
+                            option.legend[0].data = orderedLegend;
+                            chart.setOption({legend: option.legend}, {notMerge: false});
                         }
                     }
                 }
@@ -140,12 +148,15 @@
                     }, false);
                 }
                 
-                // 初始调整大小
-                setTimeout(resizeChart, 100);
+                // 初始调整大小和同步地图
+                setTimeout(function() {
+                    resizeChart();
+                    syncMaps();
+                }, 200);
             }
         });
         
-        var option_5cc865cdaf584c12beaedac8c669aba8 = {
+        var option_5dd0113e3f8b46cebe8ee8e56f7db855 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -174,47 +185,11 @@
                     "value": 0
                 },
                 {
-                    "name": "\u4e0a\u6d77",
+                    "name": "\u94f6\u5ddd",
                     "value": 0
                 },
                 {
-                    "name": "\u5e7f\u4e1c",
-                    "value": 0
-                },
-                {
-                    "name": "\u6d59\u6c5f",
-                    "value": 0
-                },
-                {
-                    "name": "\u6c5f\u82cf",
-                    "value": 0
-                },
-                {
-                    "name": "\u6e56\u5317",
-                    "value": 0
-                },
-                {
-                    "name": "\u56db\u5ddd",
-                    "value": 0
-                },
-                {
-                    "name": "\u91cd\u5e86",
-                    "value": 0
-                },
-                {
-                    "name": "\u9655\u897f",
-                    "value": 0
-                },
-                {
-                    "name": "\u5929\u6d25",
-                    "value": 0
-                },
-                {
-                    "name": "\u8fbd\u5b81",
-                    "value": 0
-                },
-                {
-                    "name": "\u9ed1\u9f99\u6c5f",
+                    "name": "\u5170\u5dde",
                     "value": 0
                 },
                 {
@@ -222,7 +197,127 @@
                     "value": 0
                 },
                 {
-                    "name": "\u6e56\u5357",
+                    "name": "\u9655\u897f",
+                    "value": 0
+                },
+                {
+                    "name": "\u592a\u539f",
+                    "value": 0
+                },
+                {
+                    "name": "\u8fbd\u5b81",
+                    "value": 0
+                },
+                {
+                    "name": "\u4e4c\u9c81",
+                    "value": 0
+                },
+                {
+                    "name": "\u547c\u548c",
+                    "value": 0
+                },
+                {
+                    "name": "\u804a\u57ce",
+                    "value": 0
+                },
+                {
+                    "name": "\u6dc4\u535a",
+                    "value": 0
+                },
+                {
+                    "name": "\u627f\u5fb7",
+                    "value": 0
+                },
+                {
+                    "name": "\u5305\u5934",
+                    "value": 0
+                },
+                {
+                    "name": "\u9102\u5c14",
+                    "value": 0
+                },
+                {
+                    "name": "\u9ed1\u9f99\u6c5f",
+                    "value": 0
+                },
+                {
+                    "name": "\u4e4c\u5170",
+                    "value": 0
+                },
+                {
+                    "name": "\u6d77\u53e3",
+                    "value": 0
+                },
+                {
+                    "name": "\u5929\u6d25",
+                    "value": 0
+                },
+                {
+                    "name": "\u897f\u5b81",
+                    "value": 0
+                },
+                {
+                    "name": "\u6ca7\u5dde",
+                    "value": 0
+                },
+                {
+                    "name": "\u91cd\u5e86",
+                    "value": 0
+                },
+                {
+                    "name": "\u6e56\u5317",
+                    "value": 0
+                },
+                {
+                    "name": "\u77f3\u5bb6",
+                    "value": 0
+                },
+                {
+                    "name": "\u6606\u660e",
+                    "value": 0
+                },
+                {
+                    "name": "\u6cca\u5934",
+                    "value": 0
+                },
+                {
+                    "name": "\u5927\u8fde",
+                    "value": 0
+                },
+                {
+                    "name": "\u5c71\u4e1c",
+                    "value": 0
+                },
+                {
+                    "name": "\u6d59\u6c5f",
+                    "value": 0
+                },
+                {
+                    "name": "\u4e4c\u6d77",
+                    "value": 0
+                },
+                {
+                    "name": "\u70df\u53f0",
+                    "value": 0
+                },
+                {
+                    "name": "\u5e7f\u4e1c",
+                    "value": 0
+                },
+                {
+                    "name": "\u4fdd\u5b9a",
+                    "value": 0
+                },
+                {
+                    "name": "\u626c\u5dde",
+                    "value": 0
+                },
+                {
+                    "name": "\u5357\u5145",
+                    "value": 0
+                },
+                {
+                    "name": "\u65e0\u9521",
                     "value": 0
                 },
                 {
@@ -230,11 +325,55 @@
                     "value": 0
                 },
                 {
-                    "name": "\u6cb3\u5357",
+                    "name": "\u5408\u80a5",
                     "value": 0
                 },
                 {
-                    "name": "\u5c71\u4e1c",
+                    "name": "\u5357\u5b81",
+                    "value": 0
+                },
+                {
+                    "name": "\u62c9\u8428",
+                    "value": 0
+                },
+                {
+                    "name": "\u8d35\u9633",
+                    "value": 0
+                },
+                {
+                    "name": "\u5357\u660c",
+                    "value": 0
+                },
+                {
+                    "name": "\u6e56\u5357",
+                    "value": 0
+                },
+                {
+                    "name": "\u5ef6\u5b89",
+                    "value": 0
+                },
+                {
+                    "name": "\u516d\u76d8",
+                    "value": 0
+                },
+                {
+                    "name": "\u54b8\u9633",
+                    "value": 0
+                },
+                {
+                    "name": "\u56db\u5ddd",
+                    "value": 0
+                },
+                {
+                    "name": "\u4e0a\u6d77",
+                    "value": 0
+                },
+                {
+                    "name": "\u6986\u6797",
+                    "value": 0
+                },
+                {
+                    "name": "\u6cb3\u5357",
                     "value": 0
                 }
             ],
@@ -288,734 +427,6 @@
         },
         {
             "type": "effectScatter",
-            "name": "\u5f88\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#FF2319"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u5317\u4eac",
-                    "value": [
-                        116.407526,
-                        39.90403,
-                        8
-                    ]
-                },
-                {
-                    "name": "\u6210\u90fd",
-                    "value": [
-                        104.06,
-                        30.67,
-                        8
-                    ]
-                },
-                {
-                    "name": "\u90d1\u5dde",
-                    "value": [
-                        113.65,
-                        34.76,
-                        8
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u4f4e",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#A1FF3D"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u4e0a\u6d77",
-                    "value": [
-                        121.473701,
-                        31.230416,
-                        2
-                    ]
-                },
-                {
-                    "name": "\u82cf\u5dde",
-                    "value": [
-                        120.62,
-                        31.32,
-                        2
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u8f83\u4f4e",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#C9FF76"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u5e7f\u5dde",
-                    "value": [
-                        113.23,
-                        23.16,
-                        3
-                    ]
-                },
-                {
-                    "name": "\u6c88\u9633",
-                    "value": [
-                        123.38,
-                        41.8,
-                        3
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u4e2d",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#F5EE32"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u6df1\u5733",
-                    "value": [
-                        114.07,
-                        22.62,
-                        4
-                    ]
-                },
-                {
-                    "name": "\u54c8\u5c14\u6ee8",
-                    "value": [
-                        126.63,
-                        45.75,
-                        4
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u504f\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#FFD429"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u676d\u5dde",
-                    "value": [
-                        120.19,
-                        30.26,
-                        5
-                    ]
-                },
-                {
-                    "name": "\u957f\u6625",
-                    "value": [
-                        125.35,
-                        43.88,
-                        5
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#FF642E"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u5357\u4eac",
-                    "value": [
-                        118.78,
-                        32.04,
-                        6
-                    ]
-                },
-                {
-                    "name": "\u957f\u6c99",
-                    "value": [
-                        113,
-                        28.21,
-                        6
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u8f83\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#FFAF13"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u6b66\u6c49",
-                    "value": [
-                        114.31,
-                        30.52,
-                        7
-                    ]
-                },
-                {
-                    "name": "\u798f\u5dde",
-                    "value": [
-                        119.3,
-                        26.08,
-                        7
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
-            "name": "\u6781\u9ad8",
-            "coordinateSystem": "geo",
-            "showEffectOn": "render",
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 3.5,
-                "period": 4,
-                "color": "#CC0000"
-            },
-            "symbolSize": 12,
-            "data": [
-                {
-                    "name": "\u91cd\u5e86",
-                    "value": [
-                        106.551556,
-                        29.563009,
-                        9
-                    ]
-                },
-                {
-                    "name": "\u6d4e\u5357",
-                    "value": [
-                        117,
-                        36.65,
-                        9
-                    ]
-                }
-            ],
-            "label": {
-                "show": true,
-                "position": "right",
-                "color": "#333",
-                "margin": 8,
-                "fontSize": 10,
-                "formatter": "{b}",
-                "valueAnimation": false
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "enterable": false,
-                "confine": false,
-                "appendToBody": false,
-                "transitionDuration": 0.4,
-                "formatter": function(params) {
-    var levelMap = {
-        0: '\u6682\u65e0',
-        1: '\u5f88\u4f4e',
-        2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
-    };
-    var value = params.value[2];
-    var levelText = levelMap[value] || '\u672a\u77e5';
-    
-    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
-    
-    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
-},
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5,
-                "order": "seriesAsc"
-            },
-            "itemStyle": {
-                "opacity": 0.8
-            },
-            "xAxisIndex": 1,
-            "yAxisIndex": 1
-        },
-        {
-            "type": "effectScatter",
             "name": "\u6682\u65e0",
             "coordinateSystem": "geo",
             "showEffectOn": "render",
@@ -1029,18 +440,26 @@
             "symbolSize": 12,
             "data": [
                 {
-                    "name": "\u897f\u5b89",
+                    "name": "\u65e0\u9521",
                     "value": [
-                        108.95,
-                        34.27,
+                        120.29,
+                        31.59,
                         0
                     ]
                 },
                 {
-                    "name": "\u9752\u5c9b",
+                    "name": "\u62c9\u8428",
                     "value": [
-                        120.33,
-                        36.07,
+                        91.11,
+                        29.97,
+                        0
+                    ]
+                },
+                {
+                    "name": "\u957f\u6c99",
+                    "value": [
+                        113,
+                        28.21,
                         0
                     ]
                 }
@@ -1074,13 +493,10 @@
         0: '\u6682\u65e0',
         1: '\u5f88\u4f4e',
         2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
     };
     var value = params.value[2];
     var levelText = levelMap[value] || '\u672a\u77e5';
@@ -1101,6 +517,7 @@
             "itemStyle": {
                 "opacity": 0.8
             },
+            "z": 0,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         },
@@ -1119,10 +536,218 @@
             "symbolSize": 12,
             "data": [
                 {
-                    "name": "\u5929\u6d25",
+                    "name": "\u957f\u6625",
                     "value": [
-                        117.200983,
-                        39.084158,
+                        125.35,
+                        43.88,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u897f\u5b89",
+                    "value": [
+                        108.95,
+                        34.27,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u592a\u539f",
+                    "value": [
+                        112.53,
+                        37.87,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6c88\u9633",
+                    "value": [
+                        123.38,
+                        41.8,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u4e4c\u9c81\u6728\u9f50",
+                    "value": [
+                        87.68,
+                        43.77,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u547c\u548c\u6d69\u7279",
+                    "value": [
+                        111.65,
+                        40.82,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u804a\u57ce",
+                    "value": [
+                        115.97,
+                        36.45,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6dc4\u535a",
+                    "value": [
+                        118.05,
+                        36.78,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u627f\u5fb7",
+                    "value": [
+                        117.93,
+                        40.97,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u5305\u5934",
+                    "value": [
+                        110,
+                        40.58,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u9102\u5c14\u591a\u65af",
+                    "value": [
+                        109.781327,
+                        39.608266,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u54c8\u5c14\u6ee8",
+                    "value": [
+                        126.63,
+                        45.75,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u4e4c\u5170\u6d69\u7279",
+                    "value": [
+                        122.03,
+                        46.03,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6d77\u53e3",
+                    "value": [
+                        110.35,
+                        20.02,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u897f\u5b81",
+                    "value": [
+                        101.74,
+                        36.56,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6ca7\u5dde",
+                    "value": [
+                        116.83,
+                        38.33,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u91cd\u5e86",
+                    "value": [
+                        106.551556,
+                        29.563009,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6cca\u5934",
+                    "value": [
+                        116.34,
+                        38.04,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6d4e\u5357",
+                    "value": [
+                        117,
+                        36.65,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u4e4c\u6d77\u5e02",
+                    "value": [
+                        106.82,
+                        39.67,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u4fdd\u5b9a",
+                    "value": [
+                        115.48,
+                        38.85,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u626c\u5dde",
+                    "value": [
+                        119.42,
+                        32.39,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u5ef6\u5b89",
+                    "value": [
+                        109.47,
+                        36.6,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u516d\u76d8\u6c34",
+                    "value": [
+                        104.5,
+                        26.35,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u54b8\u9633",
+                    "value": [
+                        108.72,
+                        34.36,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u4e0a\u6d77",
+                    "value": [
+                        121.473701,
+                        31.230416,
+                        1
+                    ]
+                },
+                {
+                    "name": "\u6986\u6797",
+                    "value": [
+                        109.47,
+                        38.18,
                         1
                     ]
                 }
@@ -1156,13 +781,10 @@
         0: '\u6682\u65e0',
         1: '\u5f88\u4f4e',
         2: '\u4f4e',
-        3: '\u8f83\u4f4e',
-        4: '\u4e2d',
-        5: '\u504f\u9ad8',
-        6: '\u9ad8',
-        7: '\u8f83\u9ad8',
-        8: '\u5f88\u9ad8',
-        9: '\u6781\u9ad8'
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
     };
     var value = params.value[2];
     var levelText = levelMap[value] || '\u672a\u77e5';
@@ -1183,6 +805,447 @@
             "itemStyle": {
                 "opacity": 0.8
             },
+            "z": 1,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u4f4e",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#A1FF3D"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u5170\u5dde",
+                    "value": [
+                        103.73,
+                        36.03,
+                        2
+                    ]
+                },
+                {
+                    "name": "\u6606\u660e\u5e02",
+                    "value": [
+                        102.72,
+                        25.05,
+                        2
+                    ]
+                },
+                {
+                    "name": "\u5357\u5145",
+                    "value": [
+                        106.110698,
+                        30.837793,
+                        2
+                    ]
+                },
+                {
+                    "name": "\u8d35\u9633",
+                    "value": [
+                        106.71,
+                        26.57,
+                        2
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 2,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u4e2d",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#F5EE32"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u94f6\u5ddd",
+                    "value": [
+                        106.27,
+                        38.47,
+                        3
+                    ]
+                },
+                {
+                    "name": "\u6210\u90fd",
+                    "value": [
+                        104.06,
+                        30.67,
+                        3
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 3,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u9ad8",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#FF642E"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u5929\u6d25",
+                    "value": [
+                        117.200983,
+                        39.084158,
+                        4
+                    ]
+                },
+                {
+                    "name": "\u6b66\u6c49",
+                    "value": [
+                        114.31,
+                        30.52,
+                        4
+                    ]
+                },
+                {
+                    "name": "\u77f3\u5bb6\u5e84",
+                    "value": [
+                        114.48,
+                        38.03,
+                        4
+                    ]
+                },
+                {
+                    "name": "\u798f\u5dde",
+                    "value": [
+                        119.3,
+                        26.08,
+                        4
+                    ]
+                },
+                {
+                    "name": "\u90d1\u5dde",
+                    "value": [
+                        113.65,
+                        34.76,
+                        4
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 4,
+            "xAxisIndex": 1,
+            "yAxisIndex": 1
+        },
+        {
+            "type": "effectScatter",
+            "name": "\u5f88\u9ad8",
+            "coordinateSystem": "geo",
+            "showEffectOn": "render",
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 3.5,
+                "period": 4,
+                "color": "#FF2319"
+            },
+            "symbolSize": 12,
+            "data": [
+                {
+                    "name": "\u5317\u4eac",
+                    "value": [
+                        116.407526,
+                        39.90403,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u5927\u8fde",
+                    "value": [
+                        121.62,
+                        38.92,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u676d\u5dde",
+                    "value": [
+                        120.19,
+                        30.26,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u70df\u53f0",
+                    "value": [
+                        121.39,
+                        37.52,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u5e7f\u5dde",
+                    "value": [
+                        113.23,
+                        23.16,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u5408\u80a5",
+                    "value": [
+                        117.27,
+                        31.86,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u5357\u5b81",
+                    "value": [
+                        108.33,
+                        22.84,
+                        5
+                    ]
+                },
+                {
+                    "name": "\u5357\u660c",
+                    "value": [
+                        115.89,
+                        28.68,
+                        5
+                    ]
+                }
+            ],
+            "label": {
+                "show": true,
+                "position": "right",
+                "color": "#333",
+                "margin": 8,
+                "fontSize": 10,
+                "formatter": "{b}",
+                "valueAnimation": false
+            },
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "showContent": true,
+                "alwaysShowContent": false,
+                "showDelay": 0,
+                "hideDelay": 100,
+                "enterable": false,
+                "confine": false,
+                "appendToBody": false,
+                "transitionDuration": 0.4,
+                "formatter": function(params) {
+    var levelMap = {
+        0: '\u6682\u65e0',
+        1: '\u5f88\u4f4e',
+        2: '\u4f4e',
+        3: '\u4e2d',
+        4: '\u9ad8',
+        5: '\u5f88\u9ad8',
+        6: '\u6781\u9ad8'
+    };
+    var value = params.value[2];
+    var levelText = levelMap[value] || '\u672a\u77e5';
+    
+    // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';
+    
+    return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText + touchTip;
+},
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0,
+                "padding": 5,
+                "order": "seriesAsc"
+            },
+            "itemStyle": {
+                "opacity": 0.8
+            },
+            "z": 5,
             "xAxisIndex": 1,
             "yAxisIndex": 1
         }
@@ -1215,16 +1278,12 @@
         },
         {
             "data": [
-                "\u5f88\u9ad8",
-                "\u4f4e",
-                "\u8f83\u4f4e",
-                "\u4e2d",
-                "\u504f\u9ad8",
-                "\u9ad8",
-                "\u8f83\u9ad8",
-                "\u6781\u9ad8",
                 "\u6682\u65e0",
-                "\u5f88\u4f4e"
+                "\u5f88\u4f4e",
+                "\u4f4e",
+                "\u4e2d",
+                "\u9ad8",
+                "\u5f88\u9ad8"
             ],
             "selected": {},
             "show": true,
@@ -1245,7 +1304,16 @@
             "selector": false,
             "selectorPosition": "auto",
             "selectorItemGap": 7,
-            "selectorButtonGap": 10
+            "selectorButtonGap": 10,
+            "type": "scroll",
+            "selectedMode": false,
+            "left": "right",
+            "top": "center",
+            "orient": "vertical",
+            "textStyle": {
+                "color": "#333"
+            },
+            "icon": "circle"
         }
     ],
     "tooltip": {
@@ -1304,7 +1372,7 @@
                 "fontSize": 12
             },
             "inRange": {},
-            "calculable": true,
+            "calculable": false,
             "inverse": false,
             "splitNumber": 5,
             "hoverLink": true,
@@ -1369,9 +1437,9 @@
         "emphasis": {}
     }
 };
-        chart_5cc865cdaf584c12beaedac8c669aba8.setOption(option_5cc865cdaf584c12beaedac8c669aba8);
+        chart_5dd0113e3f8b46cebe8ee8e56f7db855.setOption(option_5dd0113e3f8b46cebe8ee8e56f7db855);
             window.addEventListener('resize', function(){
-                chart_5cc865cdaf584c12beaedac8c669aba8.resize();
+                chart_5dd0113e3f8b46cebe8ee8e56f7db855.resize();
             })
     </script>
 </body>
