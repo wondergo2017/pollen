@@ -269,6 +269,39 @@ python static_map_generator.py -f data/pollen_data_2025-03-22.csv -o output/stat
 
 生成的静态网站可以直接部署到GitHub Pages或任何静态网站托管服务。详细说明请参考`README-github-pages.md`。
 
+## 部署到GitHub Pages
+
+可以使用`static_map_generator.py`脚本生成完全静态的花粉地图网站，并部署到GitHub Pages：
+
+### 1. 手动部署
+
+```bash
+# 生成静态网站文件
+python static_map_generator.py -f data/sample_pollen_data.csv -o docs
+```
+
+参数说明：
+- `-f` 或 `--file`: 花粉数据CSV文件路径
+- `-o` 或 `--output-dir`: 输出目录，默认为`docs`
+
+将生成的`docs`目录中的文件上传到GitHub仓库，然后在GitHub仓库设置中启用GitHub Pages。
+
+### 2. 使用GitHub Actions自动部署
+
+本项目包含了GitHub Actions工作流配置，可以实现自动部署：
+
+1. 复制`.github/workflows/deploy-pollen-map.yml`文件到你的仓库
+2. 推送到GitHub
+3. 在GitHub仓库设置的Pages部分，选择从gh-pages分支部署
+
+自动部署触发条件：
+- 当推送到main分支时
+- 当data目录中的数据文件更新时
+- 当static_map_generator.py脚本更新时
+- 手动触发工作流时
+
+详细说明请参考`docs/README.md`文件。
+
 ## 贡献
 
 欢迎贡献代码、提交问题和建议！请参考贡献指南文档。

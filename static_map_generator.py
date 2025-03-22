@@ -141,6 +141,13 @@ def create_map(date_str):
     city_province_data = []  # 格式：[(城市, 省份, 花粉数值), ...]
     province_values = {}  # 按省份存储最大花粉值
     
+    # 使用自定义CDN
+    # 修改PyEcharts的JS_HOST配置，使用更可靠的CDN
+    CUSTOM_JS_HOSTS = {
+        "echarts": "https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js",
+        "china_js": "https://cdn.jsdelivr.net/npm/echarts@5/map/js/china.js"
+    }
+    
     for _, row in data.iterrows():
         city_name = row['城市']
         level = row['花粉等级']
@@ -201,45 +208,43 @@ def create_map(date_str):
     for city, value in city_data[:5]:
         print(f"示例数据: 城市: {city}, 花粉数值: {value}")
     
-    # 创建初始化选项
-    init_opts = opts.InitOpts(
-        width="1000px", 
-        height="800px",
-        theme=ThemeType.LIGHT,
-        page_title=f"全国花粉分布地图 - {date_str}"
-    )
-    
-    # 创建地图实例
-    map_chart = Map(init_opts=init_opts)
-    
-    # 添加省份填充地图 - 设置为统一的浅灰色背景，不显示花粉等级颜色
-    map_chart.add(
-        series_name="",  # 使用空字符串作为系列名称，这样图例中不会显示省份
-        data_pair=[(p, 0) for p, _ in province_data],  # 所有省份使用相同的值
-        maptype="china",
-        is_roam=True,  # 允许缩放和平移
-        label_opts=opts.LabelOpts(
-            is_show=True,  # 显示省份名称
-            font_size=10,
-            color="#000000"
-        ),
-        itemstyle_opts=opts.ItemStyleOpts(
-            color="#F7F7F7",  # 统一的浅灰色背景
-            border_width=0.5,
-            border_color="#DDDDDD",
-        ),
-        emphasis_itemstyle_opts=opts.ItemStyleOpts(
-            border_width=1,
-            border_color="#000000",
-            opacity=0.9
-        ),
-        tooltip_opts=opts.TooltipOpts(
-            is_show=False  # 不显示省份的悬浮提示
+    # 创建地图
+    china_map = (
+        Map(init_opts=opts.InitOpts(
+            width="1000px", 
+            height="800px", 
+            theme=ThemeType.LIGHT,
+            # 使用自定义CDN
+            js_host="",  # 使用空字符串，因为我们会在HTML中直接指定JS文件
+        ))
+        .add(
+            "花粉指数",  # 这是系列名称
+            data_pair=[(p, 0) for p, _ in province_data],  # 所有省份使用相同的值
+            maptype="china",
+            is_roam=True,  # 允许缩放和平移
+            label_opts=opts.LabelOpts(
+                is_show=True,  # 显示省份名称
+                font_size=10,
+                color="#000000"
+            ),
+            itemstyle_opts=opts.ItemStyleOpts(
+                color="#F7F7F7",  # 统一的浅灰色背景
+                border_width=0.5,
+                border_color="#DDDDDD",
+            ),
+            emphasis_itemstyle_opts=opts.ItemStyleOpts(
+                border_width=1,
+                border_color="#000000",
+                opacity=0.9
+            ),
+            tooltip_opts=opts.TooltipOpts(
+                is_show=False  # 不显示省份的悬浮提示
+            )
         )
     )
     
     # 设置全局选项
-    map_chart.set_global_opts(
+    china_map.set_global_opts(
         title_opts=opts.TitleOpts(
             title="",  # 删除主标题
             subtitle="",  # 子标题已删除
@@ -259,7 +264,12 @@ def create_map(date_str):
     )
     
     # 创建散点图实例
-    scatter = Geo(init_opts=init_opts)
+    scatter = Geo(init_opts=opts.InitOpts(
+        width="1000px", 
+        height="800px",
+        theme=ThemeType.LIGHT,
+        js_host="",  # 使用空字符串，因为我们会在HTML中直接指定JS文件
+    ))
     
     # 添加基础地图
     scatter.add_schema(
@@ -363,11 +373,36 @@ def create_map(date_str):
     from pyecharts.charts import Grid
     
     # 创建网格布局
-    grid = Grid(init_opts=init_opts)
-    grid.add(map_chart, grid_opts=opts.GridOpts(pos_left="10%", pos_right="10%", pos_top="10%", pos_bottom="10%"))
+    grid = Grid(init_opts=opts.InitOpts(
+        width="1000px", 
+        height="800px",
+        theme=ThemeType.LIGHT,
+        js_host="",  # 使用空字符串，因为我们会在HTML中直接指定JS文件
+    ))
+    grid.add(china_map, grid_opts=opts.GridOpts(pos_left="10%", pos_right="10%", pos_top="10%", pos_bottom="10%"))
     grid.add(scatter, grid_opts=opts.GridOpts(pos_left="10%", pos_right="10%", pos_top="10%", pos_bottom="10%"))
     
-    return grid
+    # 渲染地图
+    # 修改输出HTML，使用自定义CDN
+    html_content = grid.render_embed(template_name="simple_chart.html")
+    
+    # 替换CDN链接
+    html_content = html_content.replace(
+        '<script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>',
+        f'<script type="text/javascript" src="{CUSTOM_JS_HOSTS["echarts"]}"></script>'
+    )
+    html_content = html_content.replace(
+        '<script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/maps/china.js"></script>',
+        f'<script type="text/javascript" src="{CUSTOM_JS_HOSTS["china_js"]}"></script>'
+    )
+    
+    # 添加页面标题
+    html_content = html_content.replace(
+        '<title>Awesome-pyecharts</title>',
+        f'<title>全国花粉分布地图 - {date_str}</title>'
+    )
+    
+    return html_content
 
 def create_index_html(output_dir):
     """创建GitHub Pages适用的主页HTML"""
@@ -507,15 +542,14 @@ def generate_static_maps(file_path, output_dir=None):
     generated_maps = []
     for date in available_dates:
         print(f"正在为日期 {date} 生成地图...")
-        map_chart = create_map(date)
-        if map_chart:
+        html_content = create_map(date)
+        if html_content:
             # 渲染到HTML文件
-            map_file = os.path.join(maps_dir, f"map_{date}.html")
-            map_chart.render(map_file)
-            generated_maps.append(map_file)
-            print(f"已生成地图: {map_file}")
-        else:
-            print(f"为日期 {date} 生成地图失败")
+            map_file_path = os.path.join(maps_dir, f"map_{date}.html")
+            with open(map_file_path, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            generated_maps.append(map_file_path)
+            print(f"已生成地图: {map_file_path}")
     
     print(f"已生成 {len(generated_maps)} 个地图文件")
     print("静态地图网站已准备就绪，可部署到GitHub Pages")
