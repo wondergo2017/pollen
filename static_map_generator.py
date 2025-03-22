@@ -255,8 +255,8 @@ def create_map(date_str):
         
         print("创建图表初始化选项...")
         init_opts = opts.InitOpts(
-            width="1000px", 
-            height="800px",
+            width="100%", 
+            height="600px",
             theme=ThemeType.LIGHT,
             page_title=f"全国花粉分布地图 - {date_str}",
             renderer="canvas"  # 使用canvas渲染器更适合交互
@@ -406,7 +406,12 @@ def create_map(date_str):
                             };
                             var value = params.value[2];
                             var levelText = levelMap[value] || '未知';
-                            return params.name + '<br/>花粉等级: ' + levelText;
+                            
+                            // 检测是否为移动设备，如果是则添加提示
+                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                            var touchTip = isMobile ? '<br/>(点击可放大地图)' : '';
+                            
+                            return params.name + '<br/>花粉等级: ' + levelText + touchTip;
                         }"""
                     )
                 )
@@ -459,6 +464,16 @@ def create_map(date_str):
             if (chartContainer) {
                 var chart = echarts.getInstanceByDom(chartContainer);
                 
+                // 初始化chart大小
+                function resizeChart() {
+                    if (chart) {
+                        chart.resize();
+                    }
+                }
+                
+                // 监听窗口大小变化
+                window.addEventListener('resize', resizeChart);
+                
                 // 同步两个地图视图的函数，解决悬停缩放位置不一致问题
                 function syncMaps() {
                     if (chart) {
@@ -499,6 +514,40 @@ def create_map(date_str):
                 chart.on('click', function(params) {
                     syncMaps();
                 });
+                
+                // 移动设备触摸支持
+                chartContainer.addEventListener('touchstart', function(e) {
+                    // 阻止浏览器默认行为（如页面滚动）
+                    if (e.touches.length > 1) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                chartContainer.addEventListener('touchmove', function(e) {
+                    // 对于多点触摸（缩放），阻止页面滚动
+                    if (e.touches.length > 1) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                // 触摸结束后同步地图
+                chartContainer.addEventListener('touchend', function() {
+                    syncMaps();
+                });
+                
+                // 特别处理移动设备上的缩放
+                var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    // 移动设备上调整图表中的文本大小
+                    chart.setOption({
+                        series: [{
+                            label: { fontSize: 8 }
+                        }]
+                    }, false);
+                }
+                
+                // 初始调整大小
+                setTimeout(resizeChart, 100);
             }
         });
         """)
@@ -545,7 +594,7 @@ def create_index_html(output_dir):
     
     index_content = """
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>花粉分布地图服务</title>
@@ -556,25 +605,30 @@ def create_index_html(output_dir):
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background-color: #f5f5f5;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
             color: #333;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: calc(1.5rem + 1vw);
         }
         .controls {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
         select, button {
             padding: 8px 16px;
@@ -582,33 +636,68 @@ def create_index_html(output_dir):
             border-radius: 4px;
         }
         select {
-            margin-right: 10px;
             border: 1px solid #ccc;
+            flex: 1;
+            max-width: 200px;
+            min-width: 120px;
         }
         button {
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            flex: 0 0 auto;
         }
         button:hover {
             background-color: #45a049;
         }
         .map-container {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* 4:3 宽高比 */
+            overflow: hidden;
         }
         iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: 100%;
-            height: 800px;
         }
         .footer {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
             color: #666;
             font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: calc(1.2rem + 1vw);
+                margin-bottom: 15px;
+            }
+            select, button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            .map-container {
+                padding-bottom: 100%; /* 移动设备上使用1:1比例 */
+            }
+            .footer {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -736,6 +825,45 @@ def generate_static_maps(file_path, output_dir=None):
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 """
             html_content = html_content.replace("<head>", "<head>" + jquery_tag)
+            
+            # 添加移动设备响应式支持
+            responsive_meta_tag = """
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+"""
+            html_content = html_content.replace("<head>", "<head>" + responsive_meta_tag)
+            
+            # 添加响应式样式
+            responsive_style = """
+    <style>
+        @media (max-width: 600px) {
+            .chart-container {
+                padding: 0 !important;
+            }
+            #container {
+                height: 450px !important;
+            }
+            /* 增强移动设备上的交互体验 */
+            .ec-extension-geo {
+                touch-action: pan-x pan-y !important;
+            }
+            /* 调整文本大小 */
+            .ec-legend-item, .ec-legend-item-text {
+                font-size: 12px !important;
+            }
+        }
+        /* 防止页面超出屏幕 */
+        body {
+            overflow-x: hidden;
+        }
+        /* 增强地图互动性 */
+        #container {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+"""
+            html_content = html_content.replace("</head>", responsive_style + "</head>")
             
             # 写入最终HTML文件
             with open(map_file_path, 'w', encoding='utf-8') as f:
