@@ -17,6 +17,7 @@ from pyecharts import options as opts
 from pyecharts.charts import Map, Geo, EffectScatter, Grid
 from pyecharts.globals import ThemeType
 from pyecharts.commons.utils import JsCode
+import re
 
 # 花粉等级定义
 pollen_levels = [
@@ -512,6 +513,30 @@ def create_index_html(output_dir):
         f.write(index_content)
     
     print(f"已创建主页: {index_path}")
+    
+    # 如果生成的index.html文件已经存在，检查是否需要修复iframe的src属性
+    if os.path.exists(index_path):
+        with open(index_path, 'r', encoding='utf-8') as f:
+            index_html = f.read()
+        
+        # 检查iframe的src属性是否指向存在的地图文件
+        iframe_src_match = re.search(r'<iframe id="mapFrame" src="maps/map_([^"]+)\.html"', index_html)
+        if iframe_src_match:
+            current_date = iframe_src_match.group(1)
+            # 检查地图文件是否存在
+            map_file = os.path.join(output_dir, f"maps/map_{current_date}.html")
+            if not os.path.exists(map_file) and available_dates:
+                # 如果文件不存在但有可用日期，修复iframe的src
+                new_index_html = re.sub(
+                    r'<iframe id="mapFrame" src="maps/map_[^"]+\.html"',
+                    f'<iframe id="mapFrame" src="maps/map_{first_date}.html"',
+                    index_html
+                )
+                # 保存修复后的index.html
+                with open(index_path, 'w', encoding='utf-8') as f:
+                    f.write(new_index_html)
+                print(f"已修复iframe src属性，指向首个可用日期: {first_date}")
+    
     return index_path
 
 def generate_static_maps(file_path, output_dir=None):
