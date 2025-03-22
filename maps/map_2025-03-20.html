@@ -45,10 +45,10 @@
     </style>
 </head>
 <body >
-    <div id="16107080faf94f4ca0e5435f24a802cc" class="chart-container" style="width:100%; height:600px; "></div>
+    <div id="2f08edb8e0eb4679a720872b6fc0a480" class="chart-container" style="width:100%; height:600px; "></div>
     <script>
-        var chart_16107080faf94f4ca0e5435f24a802cc = echarts.init(
-            document.getElementById('16107080faf94f4ca0e5435f24a802cc'), 'light', {renderer: 'canvas'});
+        var chart_2f08edb8e0eb4679a720872b6fc0a480 = echarts.init(
+            document.getElementById('2f08edb8e0eb4679a720872b6fc0a480'), 'light', {renderer: 'canvas'});
             
         // 修复chart未定义的问题
         document.addEventListener('DOMContentLoaded', function() {
@@ -145,7 +145,7 @@
             }
         });
         
-        var option_16107080faf94f4ca0e5435f24a802cc = {
+        var option_2f08edb8e0eb4679a720872b6fc0a480 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -424,7 +424,7 @@
                 "brushType": "stroke",
                 "scale": 3.5,
                 "period": 4,
-                "color": "#D73027"
+                "color": "#F46D43"
             },
             "symbolSize": 12,
             "data": [
@@ -433,7 +433,7 @@
                     "value": [
                         116.407526,
                         39.90403,
-                        5
+                        8
                     ]
                 },
                 {
@@ -441,7 +441,7 @@
                     "value": [
                         112.53,
                         37.87,
-                        5
+                        8
                     ]
                 },
                 {
@@ -449,7 +449,7 @@
                     "value": [
                         114.31,
                         30.52,
-                        5
+                        8
                     ]
                 },
                 {
@@ -457,7 +457,7 @@
                     "value": [
                         121.39,
                         37.52,
-                        5
+                        8
                     ]
                 },
                 {
@@ -465,7 +465,7 @@
                     "value": [
                         108.33,
                         22.84,
-                        5
+                        8
                     ]
                 },
                 {
@@ -473,7 +473,7 @@
                     "value": [
                         115.89,
                         28.68,
-                        5
+                        8
                     ]
                 }
             ],
@@ -501,7 +501,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -698,7 +698,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -791,7 +791,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -900,7 +900,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -924,7 +924,7 @@
                 "brushType": "stroke",
                 "scale": 3.5,
                 "period": 4,
-                "color": "#FFFFBF"
+                "color": "#E0F3F8"
             },
             "symbolSize": 12,
             "data": [
@@ -933,7 +933,7 @@
                     "value": [
                         118.05,
                         36.78,
-                        3
+                        4
                     ]
                 },
                 {
@@ -941,7 +941,7 @@
                     "value": [
                         114.48,
                         38.03,
-                        3
+                        4
                     ]
                 },
                 {
@@ -949,7 +949,7 @@
                     "value": [
                         102.72,
                         25.05,
-                        3
+                        4
                     ]
                 },
                 {
@@ -957,7 +957,7 @@
                     "value": [
                         117,
                         36.65,
-                        3
+                        4
                     ]
                 },
                 {
@@ -965,7 +965,7 @@
                     "value": [
                         120.19,
                         30.26,
-                        3
+                        4
                     ]
                 },
                 {
@@ -973,7 +973,7 @@
                     "value": [
                         119.3,
                         26.08,
-                        3
+                        4
                     ]
                 },
                 {
@@ -981,7 +981,7 @@
                     "value": [
                         106.71,
                         26.57,
-                        3
+                        4
                     ]
                 },
                 {
@@ -989,7 +989,7 @@
                     "value": [
                         113.65,
                         34.76,
-                        3
+                        4
                     ]
                 }
             ],
@@ -1017,7 +1017,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -1041,7 +1041,7 @@
                 "brushType": "stroke",
                 "scale": 3.5,
                 "period": 4,
-                "color": "#F46D43"
+                "color": "#FEE090"
             },
             "symbolSize": 12,
             "data": [
@@ -1050,7 +1050,7 @@
                     "value": [
                         117.200983,
                         39.084158,
-                        4
+                        6
                     ]
                 },
                 {
@@ -1058,7 +1058,7 @@
                     "value": [
                         113.23,
                         23.16,
-                        4
+                        6
                     ]
                 },
                 {
@@ -1066,7 +1066,7 @@
                     "value": [
                         115.48,
                         38.85,
-                        4
+                        6
                     ]
                 },
                 {
@@ -1074,7 +1074,7 @@
                     "value": [
                         106.110698,
                         30.837793,
-                        4
+                        6
                     ]
                 },
                 {
@@ -1082,7 +1082,7 @@
                     "value": [
                         117.27,
                         31.86,
-                        4
+                        6
                     ]
                 }
             ],
@@ -1110,7 +1110,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u4e2d',                                4: '\u9ad8',                                5: '\u5f88\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#FFFFBF\",                                4: \"#F46D43\",                                5: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var colorMap = {                                0: \"#CCCCCC\",                                1: \"#4575B4\",                                2: \"#74ADD1\",                                3: \"#ABD9E9\",                                4: \"#E0F3F8\",                                5: \"#FFFFBF\",                                6: \"#FEE090\",                                7: \"#FDAE61\",                                 8: \"#F46D43\",                                9: \"#D73027\"                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            var levelColor = colorMap[value] || '#888888';                                                        // \u68c0\u6d4b\u662f\u5426\u4e3a\u79fb\u52a8\u8bbe\u5907\uff0c\u5982\u679c\u662f\u5219\u6dfb\u52a0\u63d0\u793a                            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);                            var touchTip = isMobile ? '<br/>(\u70b9\u51fb\u53ef\u653e\u5927\u5730\u56fe)' : '';                                                        // \u4f7f\u7528\u989c\u8272\u6837\u5f0f\u7a81\u51fa\u663e\u793a\u7b49\u7ea7                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: <span style=\"display:inline-block; margin-right:5px; width:10px; height:10px; background-color:' + levelColor + '; border-radius:50%;\"></span><span style=\"color:' + levelColor + '; font-weight:bold;\">' + levelText + '</span>' + touchTip;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -1303,9 +1303,9 @@
         "emphasis": {}
     }
 };
-        chart_16107080faf94f4ca0e5435f24a802cc.setOption(option_16107080faf94f4ca0e5435f24a802cc);
+        chart_2f08edb8e0eb4679a720872b6fc0a480.setOption(option_2f08edb8e0eb4679a720872b6fc0a480);
             window.addEventListener('resize', function(){
-                chart_16107080faf94f4ca0e5435f24a802cc.resize();
+                chart_2f08edb8e0eb4679a720872b6fc0a480.resize();
             })
     </script>
 </body>
