@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <meta charset="UTF-8">
     <title>全国花粉分布地图 - 2025-03-18</title>
                 <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
@@ -12,11 +14,63 @@
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
 <body >
-    <div id="12643ef40bf84b6c98d831f2c910ea14" class="chart-container" style="width:1000px; height:800px; "></div>
+    <div id="bea7d77acf1c461da398986d4d47fb72" class="chart-container" style="width:1000px; height:800px; "></div>
     <script>
-        var chart_12643ef40bf84b6c98d831f2c910ea14 = echarts.init(
-            document.getElementById('12643ef40bf84b6c98d831f2c910ea14'), 'light', {renderer: 'canvas'});
-        var option_12643ef40bf84b6c98d831f2c910ea14 = {
+        var chart_bea7d77acf1c461da398986d4d47fb72 = echarts.init(
+            document.getElementById('bea7d77acf1c461da398986d4d47fb72'), 'light', {renderer: 'canvas'});
+            
+        // 修复chart未定义的问题
+        document.addEventListener('DOMContentLoaded', function() {
+            // 使用DOM加载完成事件确保元素存在
+            // 动态查找容器ID - ECharts容器的ID总是在图表渲染时自动生成
+            var chartContainer = document.querySelector('div[_echarts_instance_]');
+            if (chartContainer) {
+                var chart = echarts.getInstanceByDom(chartContainer);
+                
+                // 同步两个地图视图的函数，解决悬停缩放位置不一致问题
+                function syncMaps() {
+                    if (chart) {
+                        var option = chart.getOption();
+                        
+                        // 确保两个地图配置存在
+                        if (option.geo && option.geo.length >= 2) {
+                            // 获取第一个地图的中心点和缩放级别
+                            var center = option.geo[0].center;
+                            var zoom = option.geo[0].zoom;
+                            
+                            // 将这些值同步应用到第二个地图
+                            option.geo[1].center = center;
+                            option.geo[1].zoom = zoom;
+                            
+                            // 更新图表，设置notMerge为false以确保只更新变化的部分，不影响其他配置
+                            chart.setOption(option, {notMerge: false});
+                        }
+                    }
+                }
+                
+                // 监听地图缩放和平移事件
+                chart.on('georoam', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图鼠标移入事件，确保悬停时同步
+                chart.on('mouseover', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图鼠标移出事件，确保鼠标移出后同步
+                chart.on('mouseout', function(params) {
+                    syncMaps();
+                });
+                
+                // 监听地图点击事件，确保点击后同步
+                chart.on('click', function(params) {
+                    syncMaps();
+                });
+            }
+        });
+        
+        var option_bea7d77acf1c461da398986d4d47fb72 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -340,7 +394,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -609,7 +663,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -702,7 +756,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -811,7 +865,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -896,7 +950,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -981,7 +1035,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter": function(params) {                        var levelMap = {                            0: '\u6682\u65e0',                            1: '\u5f88\u4f4e',                            2: '\u4f4e',                            3: '\u8f83\u4f4e',                            4: '\u4e2d',                            5: '\u504f\u9ad8',                            6: '\u9ad8',                            7: '\u8f83\u9ad8',                            8: '\u5f88\u9ad8',                            9: '\u6781\u9ad8'                        };                        var value = params.value[2];                        var levelText = levelMap[value] || '\u672a\u77e5';                        return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                    },
+                "formatter": function(params) {                            var levelMap = {                                0: '\u6682\u65e0',                                1: '\u5f88\u4f4e',                                2: '\u4f4e',                                3: '\u8f83\u4f4e',                                4: '\u4e2d',                                5: '\u504f\u9ad8',                                6: '\u9ad8',                                7: '\u8f83\u9ad8',                                8: '\u5f88\u9ad8',                                9: '\u6781\u9ad8'                            };                            var value = params.value[2];                            var levelText = levelMap[value] || '\u672a\u77e5';                            return params.name + '<br/>\u82b1\u7c89\u7b49\u7ea7: ' + levelText;                        },
                 "textStyle": {
                     "fontSize": 14
                 },
@@ -1078,7 +1132,6 @@
     "title": [
         {
             "show": true,
-            "text": "\u5168\u56fd\u82b1\u7c89\u5206\u5e03\u5730\u56fe - 2025-03-18",
             "target": "blank",
             "subtarget": "blank",
             "left": "center",
@@ -1086,11 +1139,7 @@
             "itemGap": 10,
             "textAlign": "auto",
             "textVerticalAlign": "auto",
-            "triggerEvent": false,
-            "textStyle": {
-                "color": "#333333",
-                "fontSize": 24
-            }
+            "triggerEvent": false
         },
         {
             "show": true,
@@ -1133,10 +1182,10 @@
             "show": false,
             "zlevel": 0,
             "z": 2,
-            "left": "10%",
-            "top": "10%",
-            "right": "10%",
-            "bottom": "10%",
+            "left": "5%",
+            "top": "5%",
+            "right": "5%",
+            "bottom": "5%",
             "containLabel": false,
             "backgroundColor": "transparent",
             "borderColor": "#ccc",
@@ -1148,10 +1197,10 @@
             "show": false,
             "zlevel": 0,
             "z": 2,
-            "left": "10%",
-            "top": "10%",
-            "right": "10%",
-            "bottom": "10%",
+            "left": "5%",
+            "top": "5%",
+            "right": "5%",
+            "bottom": "5%",
             "containLabel": false,
             "backgroundColor": "transparent",
             "borderColor": "#ccc",
@@ -1179,7 +1228,7 @@
         "emphasis": {}
     }
 };
-        chart_12643ef40bf84b6c98d831f2c910ea14.setOption(option_12643ef40bf84b6c98d831f2c910ea14);
+        chart_bea7d77acf1c461da398986d4d47fb72.setOption(option_bea7d77acf1c461da398986d4d47fb72);
     </script>
 </body>
 </html>
