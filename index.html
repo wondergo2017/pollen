@@ -77,6 +77,19 @@
       margin-top: 10px;
       font-size: 14px;
     }
+    .test-map-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #27ae60;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .test-map-link:hover {
+      background-color: #2ecc71;
+    }
   </style>
 </head>
 <body>
@@ -99,6 +112,11 @@
       2025年3月22日数据显示: 北京、郑州等城市花粉水平偏高(5级)，武汉花粉水平较高(7级)，六盘水花粉水平极高(9级)
     </div>
     <iframe id="mapFrame"></iframe>
+    
+    <div>
+      <p>如果地图无法正常显示，请尝试查看：</p>
+      <a href="test_map.html" target="_blank" class="test-map-link">测试地图 (直接加载)</a>
+    </div>
   </div>
 
   <script>
@@ -172,7 +190,7 @@
             iframe.src = mapUrl + '?retry=' + loadAttempts;
           }, 1000);
         } else {
-          document.getElementById('loadingMessage').innerHTML = '<span class="error">地图加载失败</span><br>可能原因：网络问题或CDN资源无法访问<br>请尝试：清除浏览器缓存或稍后再试';
+          document.getElementById('loadingMessage').innerHTML = '<span class="error">地图加载失败</span><br>可能原因：网络问题或CDN资源无法访问<br>请尝试：清除浏览器缓存或使用下方的"测试地图"链接';
           iframe.style.display = 'none';
         }
       };
