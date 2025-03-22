@@ -64,21 +64,60 @@
       <button onclick="updateMap()">查看地图</button>
     </div>
     <div id="loadingMessage">正在加载地图，请稍候...</div>
-    <iframe id="mapFrame" src="maps/map_2025-03-22.html"></iframe>
+    <iframe id="mapFrame"></iframe>
   </div>
 
   <script>
     // 设置默认日期
     let currentDate = '2025-03-22';
     
+    // 获取基础URL
+    function getBaseUrl() {
+      // 获取当前域名
+      const currentDomain = window.location.origin;
+      // 如果是zzythu.com域名，直接使用http
+      if (currentDomain.includes('zzythu.com')) {
+        return 'http://zzythu.com/pollen/';
+      }
+      // 如果是github.io域名，使用https
+      else if (currentDomain.includes('github.io')) {
+        return 'https://wondergo2017.github.io/pollen/';
+      }
+      // 默认使用相对路径
+      return '';
+    }
+    
+    // 加载地图
+    function loadMap(date) {
+      document.getElementById('loadingMessage').style.display = 'block';
+      const baseUrl = getBaseUrl();
+      const mapUrl = `${baseUrl}maps/map_${date}.html`;
+      console.log('加载地图:', mapUrl);
+      
+      // 设置iframe源
+      const iframe = document.getElementById('mapFrame');
+      iframe.onload = function() {
+        document.getElementById('loadingMessage').style.display = 'none';
+        iframe.style.display = 'block';
+      };
+      
+      iframe.onerror = function() {
+        console.error('地图加载失败');
+        document.getElementById('loadingMessage').innerHTML = '地图加载失败，请重试或选择其他日期';
+      };
+      
+      iframe.src = mapUrl;
+    }
+    
     function updateMap() {
       currentDate = document.getElementById('dateSelect').value;
-      document.getElementById('mapFrame').src = `maps/map_${currentDate}.html`;
+      loadMap(currentDate);
     }
     
     // 页面加载时设置默认地图
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('dateSelect').value = currentDate;
+      loadMap(currentDate);
     });
   </script>
 </body>
