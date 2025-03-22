@@ -357,8 +357,10 @@ def create_map(date_str):
             level_data_dict[value].append((city, value))
         
         print("创建各等级散点图...")
-        # 为每个等级创建散点图 - 直接参考map_server_example.py的做法
-        for level, data in level_data_dict.items():
+        # 按照等级顺序添加散点图系列，确保图例也按照此顺序显示
+        ordered_levels = sorted(level_data_dict.keys())
+        for level in ordered_levels:
+            data = level_data_dict[level]
             level_name = level_map.get(level, f"等级{level}")
             color = color_map.get(level, "#888888")
             
@@ -409,19 +411,37 @@ function(params) {
             )
         
         print("设置图例...")
-        # 添加图例
+        # 按等级顺序创建图例类别列表
+        legend_categories = [level_map[i] for i in range(7)]
+        
+        # 添加图例和视觉映射
         scatter.set_global_opts(
+            legend_opts=opts.LegendOpts(
+                type_="scroll",
+                pos_left="right",
+                pos_top="center",
+                orient="vertical",
+                item_width=25,
+                item_height=14,
+                # 明确指定图例项的顺序
+                selected_mode=False,
+                # 自定义图例项的顺序
+                legend_icon="circle",
+                textstyle_opts=opts.TextStyleOpts(color="#333"),
+                # 为确保顺序正确，这里手动设置图例项的顺序
+                is_show=True  # 显示图例
+            ),
             visualmap_opts=opts.VisualMapOpts(
                 is_show=True,
                 type_="piecewise",  # 使用分段型视觉映射
                 pieces=[
-                    {"min": 0, "max": 0, "label": "暂无", "color": "#C4A39F"},
-                    {"min": 1, "max": 1, "label": "很低", "color": "#81CB31"},
-                    {"min": 2, "max": 2, "label": "低", "color": "#A1FF3D"},
-                    {"min": 3, "max": 3, "label": "中", "color": "#F5EE32"},
-                    {"min": 4, "max": 4, "label": "高", "color": "#FF642E"},
-                    {"min": 5, "max": 5, "label": "很高", "color": "#FF2319"},
-                    {"min": 6, "max": 6, "label": "极高", "color": "#CC0000"}
+                    {"value": 0, "label": "暂无", "color": "#C4A39F"},
+                    {"value": 1, "label": "很低", "color": "#81CB31"},
+                    {"value": 2, "label": "低", "color": "#A1FF3D"},
+                    {"value": 3, "label": "中", "color": "#F5EE32"},
+                    {"value": 4, "label": "高", "color": "#FF642E"},
+                    {"value": 5, "label": "很高", "color": "#FF2319"},
+                    {"value": 6, "label": "极高", "color": "#CC0000"}
                 ],
                 pos_left="2%",  # 调整到左侧
                 pos_top="middle",  # 垂直居中
@@ -431,9 +451,21 @@ function(params) {
                 textstyle_opts=opts.TextStyleOpts(
                     font_size=12,
                     color="#333333"
-                )
+                ),
+                is_calculable=False  # 禁用数值范围选择
             )
         )
+        
+        # 额外设置，确保按照正确顺序显示图例
+        for series in scatter.options.get('series', []):
+            if 'name' in series:
+                level_name = series['name']
+                if level_name in level_map.values():
+                    # 按照level_map中的顺序为其分配z值，确保顺序
+                    for level, name in level_map.items():
+                        if name == level_name:
+                            series['z'] = level
+                            break
         
         print("合并地图和散点图...")
         # 合并地图和散点图
@@ -479,6 +511,14 @@ function(params) {
                             
                             // 更新图表，设置notMerge为false以确保只更新变化的部分，不影响其他配置
                             chart.setOption(option, {notMerge: false});
+                        }
+                        
+                        // 尝试修复图例顺序
+                        if (option.legend && option.legend.length > 0) {
+                            // 设置图例顺序
+                            var orderedLegend = ['暂无', '很低', '低', '中', '高', '很高', '极高'];
+                            option.legend[0].data = orderedLegend;
+                            chart.setOption({legend: option.legend}, {notMerge: false});
                         }
                     }
                 }
@@ -534,8 +574,11 @@ function(params) {
                     }, false);
                 }
                 
-                // 初始调整大小
-                setTimeout(resizeChart, 100);
+                // 初始调整大小和同步地图
+                setTimeout(function() {
+                    resizeChart();
+                    syncMaps();
+                }, 200);
             }
         });
         """)
