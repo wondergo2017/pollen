@@ -14,6 +14,12 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import seaborn as sns
+import warnings
+
+# 抑制所有与字体相关的警告
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.font_manager")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.backends")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.text")
 
 from ..config.visualization_config import (
     configure_matplotlib_fonts,
@@ -43,6 +49,14 @@ def visualize_pollen_trends(df, output_dir=None, filename=None):
     # 配置matplotlib字体
     configure_matplotlib_fonts()
     
+    # 尝试获取一个可用的字体属性对象
+    try:
+        import matplotlib.font_manager as fm
+        # 直接创建字体属性对象，优先使用sans-serif字体族
+        font_prop = fm.FontProperties(family='sans-serif')
+    except Exception:
+        font_prop = None
+    
     # 设置输出目录
     if output_dir is None:
         output_dir = get_default_output_dir()
@@ -69,8 +83,11 @@ def visualize_pollen_trends(df, output_dir=None, filename=None):
     # 添加网格
     plt.grid(True, linestyle='--', alpha=0.7)
     
-    # 设置标题
-    plt.title("城市花粉趋势图", fontsize=CHART_CONFIG['title_size'], pad=20)
+    # 设置标题 - 使用字体属性
+    if font_prop:
+        plt.title("城市花粉趋势图", fontsize=CHART_CONFIG['title_size'], pad=20, fontproperties=font_prop)
+    else:
+        plt.title("城市花粉趋势图", fontsize=CHART_CONFIG['title_size'], pad=20)
     
     # 增加兼容性处理
     # 检查是否存在'花粉指数'列，否则使用'花粉等级'作为数值
@@ -116,27 +133,45 @@ def visualize_pollen_trends(df, output_dir=None, filename=None):
             label=city
         )
     
-    # 设置x轴格式
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
-    plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+    # 解决x轴日期标签的中文显示问题
+    fig = plt.gcf()
+    ax = plt.gca()
+    
+    # 设置x轴格式，使用自定义日期格式器
+    date_formatter = mdates.DateFormatter('%m-%d')
+    ax.xaxis.set_major_formatter(date_formatter)
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+    
+    # 确保所有标签使用正确的字体
+    if font_prop:
+        for label in ax.get_xticklabels() + ax.get_yticklabels():
+            label.set_fontproperties(font_prop)
     
     # 设置y轴标签
-    plt.ylabel("花粉指数", fontsize=CHART_CONFIG['axes_size'])
+    if font_prop:
+        plt.ylabel("花粉指数", fontsize=CHART_CONFIG['axes_size'], fontproperties=font_prop)
+    else:
+        plt.ylabel("花粉指数", fontsize=CHART_CONFIG['axes_size'])
     
-    # 自动旋转日期标签
-    plt.gcf().autofmt_xdate()
+    # 自动旋转日期标签，避免重叠
+    fig.autofmt_xdate(rotation=45)
     
     # 添加图例
     if city_count > 10:
         # 如果城市数量过多，调整图例位置和列数
-        plt.legend(
+        legend = plt.legend(
             loc='upper center', 
             bbox_to_anchor=(0.5, -0.15),
             ncol=min(5, city_count),
             fontsize=CHART_CONFIG['legend_size']
         )
     else:
-        plt.legend(loc='best', fontsize=CHART_CONFIG['legend_size'])
+        legend = plt.legend(loc='best', fontsize=CHART_CONFIG['legend_size'])
+    
+    # 为图例文本设置字体
+    if font_prop and legend:
+        for text in legend.get_texts():
+            text.set_fontproperties(font_prop)
     
     # 设置刻度字体大小
     plt.xticks(fontsize=CHART_CONFIG['tick_size'])

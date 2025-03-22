@@ -12,6 +12,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import warnings
+
+# 抑制所有与字体相关的警告
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.font_manager")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.backends")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.text")
 
 from ..config.visualization_config import (
     configure_matplotlib_fonts,
@@ -41,6 +47,14 @@ def visualize_pollen_distribution(df, output_dir=None, filename=None):
     # 配置matplotlib字体
     configure_matplotlib_fonts()
     
+    # 尝试获取一个可用的字体属性对象
+    try:
+        import matplotlib.font_manager as fm
+        # 直接创建字体属性对象，优先使用sans-serif字体族
+        font_prop = fm.FontProperties(family='sans-serif')
+    except Exception:
+        font_prop = None
+    
     # 设置输出目录
     if output_dir is None:
         output_dir = get_default_output_dir()
@@ -63,19 +77,6 @@ def visualize_pollen_distribution(df, output_dir=None, filename=None):
     # 设置图表尺寸，根据城市数量调整
     fig_width = CHART_CONFIG['fig_width']
     fig_height = CHART_CONFIG['fig_height']
-    
-    # 创建图表
-    plt.figure(figsize=(fig_width, fig_height))
-    
-    # 设置背景颜色
-    plt.gcf().patch.set_facecolor('#f8f9fa')
-    plt.gca().set_facecolor('#ffffff')
-    
-    # 设置标题
-    if latest_date:
-        plt.title(f"城市花粉分布图 ({latest_date})", fontsize=CHART_CONFIG['title_size'], pad=20)
-    else:
-        plt.title("城市花粉分布图", fontsize=CHART_CONFIG['title_size'], pad=20)
     
     # 增加兼容性处理
     # 检查是否存在花粉等级列
@@ -162,16 +163,28 @@ def visualize_pollen_distribution(df, output_dir=None, filename=None):
                     bottom += np.array(levels_data[level])
             
             # 设置图例
-            ax.legend(title="花粉等级", loc='lower right', fontsize=CHART_CONFIG['legend_size'])
+            legend = ax.legend(title="花粉等级", loc='lower right', fontsize=CHART_CONFIG['legend_size'])
+            
+            # 为图例设置字体
+            if font_prop and legend:
+                for text in legend.get_texts():
+                    text.set_fontproperties(font_prop)
+                legend.get_title().set_fontproperties(font_prop)
             
             # 设置标题和标签
             if latest_date:
-                ax.set_title(f"城市花粉等级分布 ({latest_date})", fontsize=CHART_CONFIG['title_size'], pad=20)
+                title_text = f"城市花粉等级分布 ({latest_date})"
             else:
-                ax.set_title("城市花粉等级分布", fontsize=CHART_CONFIG['title_size'], pad=20)
-            
-            ax.set_xlabel("百分比 (%)", fontsize=CHART_CONFIG['axes_size'])
-            ax.set_ylabel("城市", fontsize=CHART_CONFIG['axes_size'])
+                title_text = "城市花粉等级分布"
+                
+            if font_prop:
+                ax.set_title(title_text, fontsize=CHART_CONFIG['title_size'], pad=20, fontproperties=font_prop)
+                ax.set_xlabel("百分比 (%)", fontsize=CHART_CONFIG['axes_size'], fontproperties=font_prop)
+                ax.set_ylabel("城市", fontsize=CHART_CONFIG['axes_size'], fontproperties=font_prop)
+            else:
+                ax.set_title(title_text, fontsize=CHART_CONFIG['title_size'], pad=20)
+                ax.set_xlabel("百分比 (%)", fontsize=CHART_CONFIG['axes_size'])
+                ax.set_ylabel("城市", fontsize=CHART_CONFIG['axes_size'])
             
             # 添加网格线
             ax.grid(True, axis='x', linestyle='--', alpha=0.7)
@@ -179,12 +192,23 @@ def visualize_pollen_distribution(df, output_dir=None, filename=None):
             # 设置百分比刻度
             ax.set_xlim(0, 100)
             
-            # 设置刻度标签字体大小
+            # 设置刻度标签字体大小并确保使用中文字体
             ax.tick_params(axis='both', labelsize=CHART_CONFIG['tick_size'])
+            
+            # 确保所有标签使用正确的字体
+            if font_prop:
+                for label in ax.get_xticklabels() + ax.get_yticklabels():
+                    label.set_fontproperties(font_prop)
             
             # 添加百分比标签
             for i, city in enumerate(cities):
-                ax.text(101, i, f"{city}", va='center', fontsize=CHART_CONFIG['tick_size'])
+                if font_prop:
+                    ax.text(101, i, f"{city}", va='center', 
+                           fontsize=CHART_CONFIG['tick_size'],
+                           fontproperties=font_prop)
+                else:
+                    ax.text(101, i, f"{city}", va='center', 
+                           fontsize=CHART_CONFIG['tick_size'])
             
             plt.tight_layout()
             
@@ -228,28 +252,48 @@ def visualize_pollen_distribution(df, output_dir=None, filename=None):
         colors = [get_color(value) for value in city_means.values]
         
         # 创建水平条形图
-        plt.figure(figsize=(fig_width, fig_height))
-        plt.barh(city_means.index, city_means.values, color=colors)
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+        ax.barh(city_means.index, city_means.values, color=colors)
+        
+        # 设置图表背景
+        fig.patch.set_facecolor('#f8f9fa')
+        ax.set_facecolor('#ffffff')
         
         # 设置标题和标签
         if latest_date:
-            plt.title(f"城市花粉指数分布 ({latest_date})", fontsize=CHART_CONFIG['title_size'], pad=20)
+            title_text = f"城市花粉指数分布 ({latest_date})"
         else:
-            plt.title("城市花粉指数分布", fontsize=CHART_CONFIG['title_size'], pad=20)
+            title_text = "城市花粉指数分布"
+            
+        if font_prop:
+            ax.set_title(title_text, fontsize=CHART_CONFIG['title_size'], pad=20, fontproperties=font_prop)
+            ax.set_xlabel("花粉指数", fontsize=CHART_CONFIG['axes_size'], fontproperties=font_prop)
+            ax.set_ylabel("城市", fontsize=CHART_CONFIG['axes_size'], fontproperties=font_prop)
+        else:
+            ax.set_title(title_text, fontsize=CHART_CONFIG['title_size'], pad=20)
+            ax.set_xlabel("花粉指数", fontsize=CHART_CONFIG['axes_size'])
+            ax.set_ylabel("城市", fontsize=CHART_CONFIG['axes_size'])
         
-        plt.xlabel("花粉指数", fontsize=CHART_CONFIG['axes_size'])
-        plt.ylabel("城市", fontsize=CHART_CONFIG['axes_size'])
+        # 确保所有标签使用正确的字体
+        if font_prop:
+            for label in ax.get_xticklabels() + ax.get_yticklabels():
+                label.set_fontproperties(font_prop)
         
         # 添加数值标签
         for i, v in enumerate(city_means.values):
-            plt.text(v + 1, i, f"{v:.1f}", va='center', fontsize=CHART_CONFIG['annotation_size'])
+            if font_prop:
+                ax.text(v + 1, i, f"{v:.1f}", va='center', 
+                       fontsize=CHART_CONFIG['annotation_size'],
+                       fontproperties=font_prop)
+            else:
+                ax.text(v + 1, i, f"{v:.1f}", va='center', 
+                       fontsize=CHART_CONFIG['annotation_size'])
         
         # 添加网格线
-        plt.grid(True, axis='x', linestyle='--', alpha=0.7)
+        ax.grid(True, axis='x', linestyle='--', alpha=0.7)
         
         # 设置刻度标签字体大小
-        plt.xticks(fontsize=CHART_CONFIG['tick_size'])
-        plt.yticks(fontsize=CHART_CONFIG['tick_size'])
+        ax.tick_params(axis='both', labelsize=CHART_CONFIG['tick_size'])
     
     # 生成时间戳
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")

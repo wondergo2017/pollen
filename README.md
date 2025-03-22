@@ -248,31 +248,47 @@ python visualize_example.py --data_file pollen_data_2023-04-15.csv --advanced
 findfont: Generic family 'sans-serif' not found because none of the following families were found: Microsoft YaHei, SimSun, Arial Unicode MS
 ```
 
-这是因为系统中缺少中文字体（如SimHei, Microsoft YaHei等）。脚本已添加自动字体检测功能，会自动选择系统中可用的字体。
+这是因为系统中缺少中文字体（如SimHei, Microsoft YaHei等）。脚本已添加自动字体检测功能，会尝试自动选择系统中可用的字体。
 
 ### 解决方法
 
-1. **自动检测**：
-   - 最新版本的脚本会自动检测系统中可用的字体，优先选择中文字体
-   - 如果没有找到中文字体，会自动使用系统默认字体
+我们提供了一个字体安装脚本，可以帮助您安装中文字体：
 
-2. **手动安装中文字体**：
-   - Linux系统：
-     ```bash
-     sudo apt-get install fonts-wqy-microhei fonts-wqy-zenhei
-     ```
-   - Windows系统：
-     默认已安装中文字体，如宋体(SimSun)、黑体(SimHei)等
+```bash
+# 检查已安装的中文字体
+python scripts/install_fonts.py check
 
-3. **自定义字体**：
-   - 修改 `visualization_config.py` 文件中的 `FONT_FAMILY` 变量，设置为系统中可用的字体
+# 安装文泉驿微米黑字体（Linux和macOS推荐）
+python scripts/install_fonts.py install wqy-microhei
 
-### 字体问题注意事项
+# 安装所有支持的中文字体
+python scripts/install_fonts.py install all
 
-- 即使没有合适的中文字体，脚本仍然可以正常运行并生成图表
-- 可能会看到一些关于缺失字形的警告，但不会影响图表的整体生成
-- 如果中文显示为方块或乱码，说明当前系统缺少中文字体支持
-- 图表中的中文标签可能无法正确显示，但数据点和图表结构不受影响
+# 或者使用交互式界面
+python scripts/install_fonts.py
+```
+
+如果您已经安装了中文字体，但仍然出现警告，可以尝试刷新字体缓存：
+
+```bash
+python scripts/install_fonts.py update-cache
+```
+
+对于不同操作系统的用户，推荐安装以下字体：
+
+- **Windows**: 默认已安装宋体(SimSun)和微软雅黑(Microsoft YaHei)
+- **macOS**: 安装 WenQuanYi Micro Hei 或 Noto Sans CJK SC
+- **Linux**: 安装 WenQuanYi Micro Hei 或 Noto Sans CJK SC
+
+### 手动安装字体
+
+如果自动安装失败，可以手动下载并安装以下任一字体：
+
+1. [文泉驿微米黑 (WenQuanYi Micro Hei)](http://wenq.org/wqy2/index.cgi?MicroHei)
+2. [思源黑体 (Source Han Sans)](https://github.com/adobe-fonts/source-han-sans/releases)
+3. [Noto Sans CJK SC](https://github.com/googlefonts/noto-cjk)
+
+安装完成后，重新运行程序，字体警告应该会消失。
 
 ## 可视化功能详解
 

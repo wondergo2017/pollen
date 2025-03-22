@@ -10,7 +10,28 @@ import os
 import sys
 import argparse
 import traceback
+import warnings
 from datetime import datetime
+
+# 抑制所有与字体相关的警告
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.font_manager")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.backends")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.text")
+
+# 添加字体配置初始化
+import matplotlib
+# 使用Agg后端避免需要图形界面
+matplotlib.use('Agg')
+
+# 设置matplotlib全局参数
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
+# 添加项目根目录到系统路径
+project_root = os.path.abspath(os.path.dirname(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from src.visualization import (
     generate_trend_visualization,
@@ -23,8 +44,12 @@ from src.visualization import (
 
 from src.config.visualization_config import (
     get_default_output_dir,
-    get_default_data_dir
+    get_default_data_dir,
+    configure_matplotlib_fonts
 )
+
+# 初始化字体配置
+configure_matplotlib_fonts()
 
 def parse_args():
     """解析命令行参数"""

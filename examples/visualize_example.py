@@ -10,8 +10,23 @@ import os
 import sys
 import pandas as pd
 import numpy as np
+import warnings
 from datetime import datetime, timedelta
 import random
+
+# 抑制所有与字体相关的警告
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.font_manager")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.backends")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.text")
+
+# 添加字体配置初始化
+import matplotlib
+matplotlib.use('Agg')  # 使用Agg后端避免需要图形界面
+
+# 设置matplotlib全局参数
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 # 添加项目根目录到系统路径
 project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -30,8 +45,12 @@ from src.visualization import (
 from src.config.visualization_config import (
     get_default_output_dir,
     get_default_data_dir,
-    POLLEN_LEVEL_COLORS
+    POLLEN_LEVEL_COLORS,
+    configure_matplotlib_fonts
 )
+
+# 初始化字体配置
+configure_matplotlib_fonts()
 
 def generate_sample_data(num_cities=5, num_days=30, random_seed=42):
     """生成示例数据"""

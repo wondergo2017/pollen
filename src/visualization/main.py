@@ -8,6 +8,12 @@
 
 import os
 import pandas as pd
+import warnings
+
+# 抑制所有与字体相关的警告
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.font_manager")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.backends")
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib.text")
 
 from .data_loading import load_data, filter_data, prepare_data_for_visualization
 from .trend_visualization import visualize_pollen_trends
