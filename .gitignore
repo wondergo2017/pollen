@@ -1,6 +1,13 @@
 # 忽略输出目录
 output/
 
+# HTML生成文件
+html/*.html
+html/map_*.html
+html/templates/*.html
+!html/.gitkeep
+!html/templates/.gitkeep
+
 # Python 相关忽略项
 __pycache__/
 *.py[cod]
@@ -32,3 +39,43 @@ var/
 # 操作系统相关忽略项
 .DS_Store
 Thumbs.db 
+
+# 数据文件
+*.csv.bak
+*.csv.old
+*.xlsx
+*.xls
+
+# 日志文件
+*.log
+logs/
+log/
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+temp/
+tmp/
+
+# Flask相关
+instance/
+.webassets-cache
+flask_session/
+
+# 虚拟环境
+venv/
+ENV/
+env/
+.env/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 其他临时文件和命令历史
+.history
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/ 
