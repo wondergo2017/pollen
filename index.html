@@ -1,217 +1,105 @@
+
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>花粉分布地图服务</title>
-  <!-- 添加备用的ECharts库，以防地图内部的CDN加载失败 -->
-  <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
-  <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/extension/dataTool.min.js"></script>
-  <script type="text/javascript">
-    // 备用的中国地图数据
-    window.backupChinaMapLoaded = false;
-    function loadBackupChinaMap() {
-      if (!window.backupChinaMapLoaded) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/map/js/china.js';
-        script.onerror = function() {
-          console.error('备用中国地图数据加载失败');
-          document.getElementById('loadingMessage').innerHTML = '地图数据加载失败，请检查网络连接或稍后再试';
-        };
-        document.head.appendChild(script);
-        window.backupChinaMapLoaded = true;
-      }
-    }
-    // 在5秒后如果地图还未加载成功，尝试加载备用的中国地图数据
-    setTimeout(loadBackupChinaMap, 5000);
-  </script>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    h1 {
-      color: #2c3e50;
-    }
-    select {
-      padding: 8px 12px;
-      margin: 10px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-    button {
-      padding: 8px 16px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    #loadingMessage {
-      margin-top: 20px;
-      color: #e74c3c;
-      font-weight: bold;
-    }
-    .error {
-      color: #e74c3c;
-      font-weight: bold;
-    }
-    .info {
-      color: #3498db;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .test-map-link {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 5px 10px;
-      background-color: #27ae60;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    .test-map-link:hover {
-      background-color: #2ecc71;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>花粉分布地图服务</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        select, button {
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        select {
+            margin-right: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .map-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        iframe {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            height: 800px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>花粉分布地图服务</h1>
-    <div>
-      <select id="dateSelect">
-        <option value="2025-03-16">2025年3月16日</option>
-        <option value="2025-03-17">2025年3月17日</option>
-        <option value="2025-03-18">2025年3月18日</option>
-        <option value="2025-03-19">2025年3月19日</option>
-        <option value="2025-03-20">2025年3月20日</option>
-        <option value="2025-03-21">2025年3月21日</option>
-        <option value="2025-03-22">2025年3月22日</option>
-      </select>
-      <button onclick="updateMap()">查看地图</button>
-    </div>
-    <div id="loadingMessage">正在加载地图，请稍候...</div>
-    <div id="infoMessage" class="info">
-      2025年3月22日数据显示: 北京、郑州等城市花粉水平偏高(5级)，武汉花粉水平较高(7级)，六盘水花粉水平极高(9级)
-    </div>
-    <iframe id="mapFrame"></iframe>
-    
-    <div>
-      <p>如果地图无法正常显示，请尝试查看：</p>
-      <a href="test_map.html" target="_blank" class="test-map-link">测试地图 (直接加载)</a>
-      <a href="fix_map.html" target="_blank" class="test-map-link" style="margin-left: 10px;">地图修复工具</a>
-      <a href="simple_map_test.html" target="_blank" class="test-map-link" style="margin-left: 10px;">简单地图测试</a>
-    </div>
-  </div>
+    <div class="container">
+        <h1>全国花粉分布地图服务</h1>
+        <div class="controls">
+            <select id="dateSelect">
+                <option value="2023-05-01">2023-05-01</option>
+                <option value="2023-05-02">2023-05-02</option>
+                <option value="2023-05-03">2023-05-03</option>
 
-  <script>
-    // 设置默认日期
-    let currentDate = '2025-03-22';
-    let loadAttempts = 0;
-    const MAX_ATTEMPTS = 3;
-    
-    // 获取基础URL
-    function getBaseUrl() {
-      // 获取当前域名
-      const currentDomain = window.location.origin;
-      // 如果是zzythu.com域名，直接使用http
-      if (currentDomain.includes('zzythu.com')) {
-        return 'http://zzythu.com/pollen/';
-      }
-      // 如果是github.io域名，使用https
-      else if (currentDomain.includes('github.io')) {
-        return 'https://wondergo2017.github.io/pollen/';
-      }
-      // 默认使用相对路径
-      return '';
-    }
-    
-    // 日期对应的数据摘要（临时添加，方便用户了解每天的数据状况）
-    const dateSummary = {
-      '2025-03-16': '北京花粉水平偏高(5级)，西安花粉水平较高(7级)',
-      '2025-03-17': '武汉花粉水平较高(7级)，成都花粉水平偏高(5级)',
-      '2025-03-18': '上海花粉水平偏高(5级)，广州花粉水平很低(1级)',
-      '2025-03-19': '深圳花粉水平很低(1级)，长春花粉水平偏高(5级)',
-      '2025-03-20': '天津花粉水平偏高(5级)，哈尔滨花粉水平较高(7级)',
-      '2025-03-21': '南京花粉水平偏高(5级)，杭州花粉水平很低(1级)',
-      '2025-03-22': '北京、郑州等城市花粉水平偏高(5级)，武汉花粉水平较高(7级)，六盘水花粉水平极高(9级)'
-    };
-    
-    // 加载地图
-    function loadMap(date) {
-      document.getElementById('loadingMessage').style.display = 'block';
-      document.getElementById('loadingMessage').innerHTML = '正在加载地图，请稍候...';
-      document.getElementById('mapFrame').style.display = 'none';
-      
-      // 更新数据摘要信息
-      const infoEl = document.getElementById('infoMessage');
-      infoEl.innerHTML = dateSummary[date] || `${date}的花粉分布数据`;
-      
-      const baseUrl = getBaseUrl();
-      const mapUrl = `${baseUrl}maps/map_${date}.html`;
-      console.log('加载地图:', mapUrl);
-      
-      // 设置iframe源
-      const iframe = document.getElementById('mapFrame');
-      
-      // 处理加载成功
-      iframe.onload = function() {
-        document.getElementById('loadingMessage').style.display = 'none';
-        iframe.style.display = 'block';
-        loadAttempts = 0; // 重置尝试次数
-      };
-      
-      // 处理加载失败
-      iframe.onerror = function() {
-        loadAttempts++;
-        console.error(`地图加载失败，第${loadAttempts}次尝试`);
-        
-        if (loadAttempts < MAX_ATTEMPTS) {
-          // 尝试使用备用CDN
-          loadBackupChinaMap();
-          document.getElementById('loadingMessage').innerHTML = `正在尝试备用加载方式 (${loadAttempts}/${MAX_ATTEMPTS})...`;
-          // 1秒后重试
-          setTimeout(function() {
-            iframe.src = mapUrl + '?retry=' + loadAttempts;
-          }, 1000);
-        } else {
-          document.getElementById('loadingMessage').innerHTML = '<span class="error">地图加载失败</span><br>可能原因：网络问题或CDN资源无法访问<br>请尝试：清除浏览器缓存或使用下方的"测试地图"链接';
-          iframe.style.display = 'none';
+            </select>
+            <button onclick="updateMap()">查看地图</button>
+        </div>
+        <div class="map-container">
+            <iframe id="mapFrame" src="" frameborder="0"></iframe>
+        </div>
+        <div class="footer">
+            数据更新时间: 2025-03-22 11:05:51
+        </div>
+    </div>
+
+    <script>
+        function updateMap() {
+            var date = document.getElementById('dateSelect').value;
+            document.getElementById('mapFrame').src = './maps/map_' + date + '.html';
         }
-      };
-      
-      // 加载地图
-      iframe.src = mapUrl + (loadAttempts > 0 ? '?retry=' + loadAttempts : '');
-    }
-    
-    function updateMap() {
-      currentDate = document.getElementById('dateSelect').value;
-      loadAttempts = 0; // 重置尝试次数
-      loadMap(currentDate);
-    }
-    
-    // 页面加载时设置默认地图
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('dateSelect').value = currentDate;
-      loadMap(currentDate);
-    });
-  </script>
+        
+        // 初始化默认地图
+        window.onload = function() {
+            var defaultDate = document.getElementById('dateSelect').value;
+            if (defaultDate) {
+                document.getElementById('mapFrame').src = './maps/map_' + defaultDate + '.html';
+            }
+        }
+    </script>
 </body>
 </html>
