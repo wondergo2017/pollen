@@ -1,0 +1,37 @@
+name: 部署花粉地图到GitHub Pages
+
+on:
+  push:
+    branches: [ main ]  # 当推送到main分支时触发
+  workflow_dispatch:    # 允许手动触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+        
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy pyecharts
+          
+      - name: 生成静态地图文件
+        run: |
+          python static_map_generator.py -f data/sample_pollen_data.csv -o docs
+          # 如果有更新的数据文件，可以替换上面的命令使用最新的数据
+          # python static_map_generator.py -f data/pollen_data_最新日期.csv -o docs
+          
+      - name: 部署到GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs  # 要部署的文件夹
+          branch: gh-pages  # 部署到的分支
+          clean: true  # 清理旧文件 
