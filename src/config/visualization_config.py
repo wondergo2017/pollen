@@ -186,6 +186,8 @@ def configure_matplotlib_fonts():
 CHART_CONFIG = {
     # 图表尺寸
     'figure_size': (12, 8),
+    'fig_width': 12,  # 兼容性配置
+    'fig_height': 8,  # 兼容性配置
     
     # 字体大小
     'title_size': 16,

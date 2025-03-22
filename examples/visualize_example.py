@@ -2,170 +2,202 @@
 # -*- coding: utf-8 -*-
 
 """
-花粉数据可视化示例脚本
-此脚本展示了如何使用花粉数据可视化模块
+花粉可视化示例脚本
+展示如何使用花粉可视化模块生成各种图表
 """
 
 import os
 import sys
 import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import random
 
 # 添加项目根目录到系统路径
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, project_root)
 
-# 导入可视化模块
-from src.visualization import pollen_visualization as pv
-from src.config.visualization_config import (
-    configure_matplotlib_fonts, 
-    get_default_data_dir,
-    get_default_output_dir
+from src.visualization import (
+    generate_trend_visualization,
+    generate_distribution_visualization,
+    generate_all_visualizations,
+    get_available_cities,
+    display_available_data_files,
+    find_data_files,
+    load_data
 )
 
-def generate_sample_data(output_file=None):
-    """生成示例数据文件"""
-    if output_file is None:
-        data_dir = get_default_data_dir()
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
-        output_file = os.path.join(data_dir, 'sample_pollen_data.csv')
+from src.config.visualization_config import (
+    get_default_output_dir,
+    get_default_data_dir,
+    POLLEN_LEVEL_COLORS
+)
+
+def generate_sample_data(num_cities=5, num_days=30, random_seed=42):
+    """生成示例数据"""
+    print("生成示例数据...")
     
-    # 创建示例数据
-    print(f"生成示例数据文件: {output_file}")
-    
-    # 检查文件是否已存在
-    if os.path.exists(output_file):
-        print(f"示例数据文件已存在: {output_file}")
-        return output_file
+    # 设置随机种子以确保可重复性
+    random.seed(random_seed)
+    np.random.seed(random_seed)
     
     # 城市列表
-    cities = ['北京', '上海', '广州', '成都', '武汉', '西安']
-    # 花粉类型
-    pollen_types = {
-        '北京': '杨树花粉',
-        '上海': '梧桐花粉',
-        '广州': '草本花粉',
-        '成都': '松树花粉',
-        '武汉': '柏树花粉',
-        '西安': '柳树花粉'
-    }
+    cities = ["北京", "上海", "广州", "深圳", "杭州", "成都", "武汉", "西安", "南京", "重庆"]
+    cities = cities[:min(num_cities, len(cities))]
     
-    # 创建日期范围 (2025年3月1日到3月31日)
-    dates = pd.date_range(start='2025-03-01', end='2025-03-31')
+    # 日期范围
+    end_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    dates = [(end_date - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(num_days)]
+    dates.reverse()  # 从过去到现在
     
-    # 准备数据列表
-    data = []
+    # 花粉等级描述
+    pollen_level_descriptions = [
+        "无花粉", "极少花粉", "少量花粉", "中等花粉", "较多花粉", "大量花粉"
+    ]
     
-    import random
-    random.seed(42)  # 确保结果可重复
-    
+    # 生成数据记录
+    records = []
     for city in cities:
-        # 每个城市的花粉等级初始值 (0-5)
-        level = random.randint(0, 2)
+        # 为每个城市生成一个花粉趋势基线
+        baseline = np.random.uniform(0.5, 3.0)
+        trend = np.random.uniform(-0.5, 0.5)
         
-        for date in dates:
-            # 花粉等级有一定的连续性，在前一天的基础上小幅变化
-            change = random.choice([-1, -1, 0, 0, 0, 1, 1])
-            level = max(0, min(5, level + change))  # 限制在0-5范围内
+        for i, date in enumerate(dates):
+            # 生成花粉指数，有一个缓慢的季节性趋势
+            seasonal_factor = np.sin(np.pi * i / (len(dates) / 2)) * 2  # 季节性波动
+            random_factor = np.random.normal(0, 0.5)  # 随机波动
             
-            # 根据等级生成相应的花粉浓度值
-            if level == 0:
-                concentration = random.randint(0, 10)
-            elif level == 1:
-                concentration = random.randint(10, 20)
-            elif level == 2:
-                concentration = random.randint(20, 40)
-            elif level == 3:
-                concentration = random.randint(40, 80)
-            elif level == 4:
-                concentration = random.randint(80, 120)
-            else:  # level == 5
-                concentration = random.randint(120, 200)
+            # 计算花粉指数
+            pollen_index = max(0, min(5, baseline + trend * (i / len(dates)) + seasonal_factor + random_factor))
+            pollen_level = min(int(pollen_index), 5)  # 花粉等级，0-5
             
-            # 添加记录
-            data.append({
-                '日期': date.strftime('%Y-%m-%d'),
-                '城市': city,
-                '花粉等级': level,
-                '花粉浓度': concentration,
-                '花粉类型': pollen_types[city]
-            })
+            # 创建记录
+            record = {
+                "日期": date,
+                "城市": city,
+                "花粉指数": round(pollen_index, 2),
+                "花粉等级": pollen_level,
+                "花粉等级描述": pollen_level_descriptions[pollen_level]
+            }
+            records.append(record)
     
-    # 创建DataFrame并保存
-    df = pd.DataFrame(data)
+    # 创建DataFrame
+    df = pd.DataFrame(records)
     
-    # 确保目录存在
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    # 保存到文件
+    data_dir = get_default_data_dir()
+    os.makedirs(data_dir, exist_ok=True)
+    file_path = os.path.join(data_dir, "sample_pollen_data.csv")
+    df.to_csv(file_path, index=False, encoding="utf-8")
     
-    # 保存为CSV
-    df.to_csv(output_file, index=False, encoding='utf-8')
-    print(f"已生成示例数据，共 {len(df)} 条记录")
+    print(f"示例数据已保存到: {file_path}")
+    print(f"生成了 {len(cities)} 个城市 {len(dates)} 天的数据，共 {len(records)} 条记录")
     
-    return output_file
+    return file_path
 
-def run_visualization_examples():
-    """运行可视化示例"""
-    # 配置matplotlib字体
-    configure_matplotlib_fonts()
+def demo_trend_visualization():
+    """演示花粉趋势图生成"""
+    print("\n==== 演示花粉趋势图生成 ====")
     
-    # 获取示例数据
-    data_file = generate_sample_data()
+    # 确保示例数据存在
+    data_file = os.path.join(get_default_data_dir(), "sample_pollen_data.csv")
+    if not os.path.exists(data_file):
+        data_file = generate_sample_data()
     
-    # 加载数据
-    print(f"\n加载数据: {data_file}")
-    df = pv.load_data(data_file)
-    print(f"成功加载 {len(df)} 条记录")
+    # 获取可用城市
+    cities = get_available_cities(data_file)
+    print(f"可用城市: {', '.join(cities)}")
     
-    # 获取数据概览
-    print("\n数据概览:")
-    print(f"- 城市列表: {', '.join(df['城市'].unique())}")
-    print(f"- 日期范围: {df['日期'].min()} 至 {df['日期'].max()}")
-    print(f"- 花粉等级范围: {df['花粉等级'].min()} 至 {df['花粉等级'].max()}")
+    # 生成所有城市的趋势图
+    output_file = generate_trend_visualization(data_file)
+    print(f"所有城市趋势图已保存到: {output_file}")
     
-    # 准备输出目录
-    output_dir = get_default_output_dir()
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # 示例1: 所有城市的花粉趋势图
-    print("\n示例1: 生成所有城市的花粉趋势图")
-    prepared_df = pv.prepare_data_for_visualization(df)
-    output_path = pv.visualize_pollen_trends(prepared_df, output_dir=output_dir)
-    print(f"输出文件: {output_path}")
-    
-    # 示例2: 仅展示部分城市的花粉趋势图
-    print("\n示例2: 生成北京和上海的花粉趋势图")
-    filtered_df = pv.filter_data(df, cities=['北京', '上海'])
-    prepared_df = pv.prepare_data_for_visualization(filtered_df)
-    output_path = pv.visualize_pollen_trends(
-        prepared_df, 
-        output_dir=output_dir,
-        filename="beijing_shanghai_trends.png"
+    # 生成部分城市的趋势图
+    selected_cities = cities[:3] if len(cities) > 3 else cities
+    output_file = generate_trend_visualization(
+        data_file, 
+        cities=selected_cities,
+        filename="selected_cities_trend.png"
     )
-    print(f"输出文件: {output_path}")
+    print(f"选定城市趋势图已保存到: {output_file}")
+
+def demo_distribution_visualization():
+    """演示花粉分布图生成"""
+    print("\n==== 演示花粉分布图生成 ====")
     
-    # 示例3: 花粉分布图
-    print("\n示例3: 生成花粉分布图")
-    output_path = pv.visualize_pollen_distribution(prepared_df, output_dir=output_dir)
-    print(f"输出文件: {output_path}")
+    # 确保示例数据存在
+    data_file = os.path.join(get_default_data_dir(), "sample_pollen_data.csv")
+    if not os.path.exists(data_file):
+        data_file = generate_sample_data()
     
-    # 示例4: 特定日期范围的趋势图
-    print("\n示例4: 生成特定日期范围 (3月10日至3月20日) 的花粉趋势图")
-    date_filtered_df = pv.filter_data(df, start_date='2025-03-10', end_date='2025-03-20')
-    prepared_df = pv.prepare_data_for_visualization(date_filtered_df)
-    output_path = pv.visualize_pollen_trends(
-        prepared_df, 
-        output_dir=output_dir,
-        filename="pollen_trends_mar10_20.png"
-    )
-    print(f"输出文件: {output_path}")
+    # 生成分布图
+    output_file = generate_distribution_visualization(data_file)
+    print(f"分布图已保存到: {output_file}")
+
+def demo_all_visualizations():
+    """演示生成所有可视化图表"""
+    print("\n==== 演示生成所有可视化图表 ====")
     
-    print("\n所有示例已完成。可视化结果保存在: " + output_dir)
+    # 确保示例数据存在
+    data_file = os.path.join(get_default_data_dir(), "sample_pollen_data.csv")
+    if not os.path.exists(data_file):
+        data_file = generate_sample_data()
+    
+    # 生成所有图表
+    output_files = generate_all_visualizations(data_file)
+    print(f"已生成 {len(output_files)} 个图表:")
+    for file in output_files:
+        print(f"  - {file}")
+
+def print_data_summary(data_file):
+    """打印数据摘要"""
+    print("\n==== 数据摘要 ====")
+    
+    try:
+        df = load_data(data_file)
+        print(f"数据文件: {data_file}")
+        print(f"记录数量: {len(df)}")
+        print(f"日期范围: {df['日期'].min()} 至 {df['日期'].max()}")
+        print(f"城市数量: {df['城市'].nunique()}")
+        print(f"城市列表: {', '.join(sorted(df['城市'].unique()))}")
+        
+        if '花粉等级' in df.columns:
+            levels = df['花粉等级'].value_counts().sort_index()
+            print("花粉等级分布:")
+            for level, count in levels.items():
+                percentage = count / len(df) * 100
+                print(f"  等级 {level}: {count} 条记录 ({percentage:.1f}%)")
+    
+    except Exception as e:
+        print(f"读取数据文件时出错: {e}")
+
+def main():
+    """主函数"""
+    print("====== 花粉可视化示例 ======")
+    
+    # 列出可用数据文件
+    print("\n可用数据文件:")
+    data_files = find_data_files()
+    
+    # 如果没有数据文件，生成示例数据
+    if not data_files:
+        print("未找到数据文件，将生成示例数据")
+        data_file = generate_sample_data()
+    else:
+        # 使用最新的数据文件
+        data_file = data_files[0]
+        print(f"使用最新的数据文件: {data_file}")
+    
+    # 打印数据摘要
+    print_data_summary(data_file)
+    
+    # 演示各种可视化功能
+    demo_trend_visualization()
+    demo_distribution_visualization()
+    demo_all_visualizations()
+    
+    print("\n====== 示例完成 ======")
+    print(f"所有输出文件保存在: {get_default_output_dir()}")
 
 if __name__ == "__main__":
-    try:
-        run_visualization_examples()
-    except Exception as e:
-        print(f"运行示例时出错: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1) 
+    main() 

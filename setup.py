@@ -14,6 +14,7 @@ setup(
         "pandas>=1.1.0",
         "numpy>=1.19.0",
         "seaborn>=0.11.0",
+        "requests>=2.25.0",
     ],
     extras_require={
         "dev": [
@@ -21,9 +22,6 @@ setup(
             "black>=20.8b1",
             "flake8>=3.8.0",
         ],
-        "data": [
-            "requests>=2.25.0",
-        ]
     },
     python_requires=">=3.6",
     classifiers=[
@@ -37,7 +35,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "pollen-viz=examples.run_visualization:main",
+            "pollen-viz=pollen_viz:main",
+            "pollen-data=pollen_data_tool:main",
         ],
     },
 ) 
