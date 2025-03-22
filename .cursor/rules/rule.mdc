@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- 代码临时生成的文件都放在.tempory 目录下，例如测试文件时
+- 保持代码目录简洁
+- 测试文件都放在tests目录中
+- example文件都放在examples目录中
+- 除了必要的data，代码输出的文件都放在output中
+
+

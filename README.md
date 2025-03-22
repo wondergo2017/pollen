@@ -253,4 +253,26 @@ SPI2 Team
 
 ## 许可证
 
-MIT许可证 
+MIT许可证
+
+### 静态地图生成器（GitHub Pages支持）
+
+项目提供了静态地图生成器，可以生成适合部署到GitHub Pages的静态HTML文件：
+
+```bash
+# 生成静态地图
+python static_map_generator.py -f data/sample_pollen_data.csv -o docs
+
+# 指定输出目录
+python static_map_generator.py -f data/pollen_data_2025-03-22.csv -o output/static_maps
+```
+
+生成的静态网站可以直接部署到GitHub Pages或任何静态网站托管服务。详细说明请参考`README-github-pages.md`。
+
+## 贡献
+
+欢迎贡献代码、提交问题和建议！请参考贡献指南文档。
+
+## 许可证
+
+本项目采用MIT许可证，详见LICENSE文件。 
