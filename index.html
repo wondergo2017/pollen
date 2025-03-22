@@ -59,19 +59,19 @@
       </select>
       <button onclick="updateMap()">查看地图</button>
     </div>
-    <iframe id="mapFrame" src="maps/map_2025-03-22.html"></iframe>
+    <iframe id="mapFrame" src="https://wondergo2017.github.io/pollen/maps/map_2025-03-22.html"></iframe>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // 页面加载时设置默认地图
       document.getElementById('dateSelect').value = '2025-03-22';
-      document.getElementById('mapFrame').src = 'maps/map_2025-03-22.html';
+      document.getElementById('mapFrame').src = 'https://wondergo2017.github.io/pollen/maps/map_2025-03-22.html';
     });
 
     function updateMap() {
       const date = document.getElementById('dateSelect').value;
-      document.getElementById('mapFrame').src = `maps/map_${date}.html`;
+      document.getElementById('mapFrame').src = `https://wondergo2017.github.io/pollen/maps/map_${date}.html`;
     }
   </script>
 </body>
