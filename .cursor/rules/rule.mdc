@@ -6,12 +6,12 @@ alwaysApply: false
 
 # Your rule content
 
-- 代码临时生成的信息都放在.tempory 目录下，例如测试信息
+- 代码临时生成的信息都放在.tempory/目录下，例如测试信息
 - 保持代码目录简洁。根目录下的文件只包括重要的入口文件和readme，其他都放在各自的文件夹中。
-- 测试文件都放在tests目录中。测试时应当减少使用的参数，来加快测试。
-- example文件都放在examples目录中
-- 除了必要的data，代码输出的文件都放在output中
-- 长期需要使用的数据放在data目录中
-- 配置文件放在config目录中
+- 测试文件都放在tests/目录中。测试时应当减少使用的参数，来加快测试。
+- example文件都放在examples/目录中
+- 除了必要的数据，代码输出的文件都放在output/中
+- 长期需要使用的数据放在data/目录中
+- 配置文件放在config/目录中
 
 
